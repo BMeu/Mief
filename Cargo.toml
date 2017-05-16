@@ -1,0 +1,16 @@
+[package]
+name = "mief"
+version = "0.0.0"
+authors = ["BMeu <bastian@bastianmeyer.eu>"]
+description = "Mief is a Pong clone written in Rust."
+repository = "https://github.com/BMeu/Mief"
+readme = "README.md"
+documentation = "https://docs.rs/mief/"
+license = "MIT/Apache-2.0"
+keywords = ["pong", "clone"]
+categories = ["games"]
+
+[[bin]]
+name = "mief"
+
+[dependencies]
