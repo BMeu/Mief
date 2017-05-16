@@ -16,6 +16,7 @@
                                            stutter, used_underscore_binding, use_debug, wrong_self_convention,
                                            wrong_pub_self_convention))]
 
+/// Run `Mief`
 fn main() {
     println!("Hello, world!");
 }
