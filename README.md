@@ -1,6 +1,11 @@
 # Mief
 
-Mief is a Pong clone written in Rust. 
+[![Build Status on Travis](https://travis-ci.org/BMeu/Mief.svg?branch=master)](https://travis-ci.org/BMeu/Fine-Grained)
+[![Build Status on AppVeyor](https://ci.appveyor.com/api/projects/status/xxukbycd0en6kvr8?svg=true)](https://ci.appveyor.com/project/BMeu/mief)
+[![Codecov](https://codecov.io/gh/BMeu/Fine-Grained/branch/master/graph/badge.svg)](https://codecov.io/gh/BMeu/Mief)
+[![License](https://img.shields.io/github/license/BMeu/Mief.svg)](README.md)
+
+Mief is a Pong clone written in Rust.
 
 **WORK IN PROGRESS**
 
