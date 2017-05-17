@@ -12,7 +12,7 @@ use execution_flow::Error;
 
 /// The exit codes returned by the _Mief_.
 #[derive(Clone, Copy, Debug)]
-pub enum ExitCode {
+pub enum Code {
     /// Successful (i.e. expected) execution (Code: `0`).
     Success = 0,
 
@@ -24,18 +24,18 @@ pub enum ExitCode {
 pub fn fail_from_error(error: Error) -> ! {
     match error {
         Error::Piston(message) => {
-            fail_with_message(ExitCode::PistonFailure, &message);
+            fail_with_message(Code::PistonFailure, &message);
         }
     }
 }
 
 /// Quit the program execution with the given `exit_code` and an error `message` explaining the exit.
-pub fn fail_with_message(exit_code: ExitCode, message: &str) -> ! {
+pub fn fail_with_message(exit_code: Code, message: &str) -> ! {
     println!("Error: {description}", description = message);
     process::exit(exit_code as i32)
 }
 
 /// Quit the program execution with a `Success` exit code.
 pub fn succeed() -> ! {
-    process::exit(ExitCode::Success as i32)
+    process::exit(Code::Success as i32)
 }
