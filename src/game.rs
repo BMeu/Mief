@@ -14,7 +14,7 @@ use piston_window::RenderArgs;
 use piston_window::RenderEvent;
 use piston_window::WindowSettings;
 
-use error::Result;
+use execution_flow::Result;
 use color;
 
 /// The OpenGL version.

@@ -8,7 +8,7 @@
 
 use std::process;
 
-use error::Error;
+use execution_flow::Error;
 
 /// The exit codes returned by the _Mief_.
 #[derive(Clone, Copy, Debug)]
@@ -20,7 +20,7 @@ pub enum ExitCode {
     PistonFailure = 1,
 }
 
-/// Quit the program execution. The exit code and message are chosen based on `error`.
+/// Quit the program execution. The exit code and message are chosen based on `execution_flow`.
 pub fn fail_from_error(error: Error) -> ! {
     match error {
         Error::Piston(message) => {
