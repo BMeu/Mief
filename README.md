@@ -1,6 +1,6 @@
 # Mief
 
-[![Build Status on Travis](https://travis-ci.org/BMeu/Mief.svg?branch=master)](https://travis-ci.org/BMeu/Fine-Grained)
+[![Build Status on Travis](https://travis-ci.org/BMeu/Mief.svg?branch=master)](https://travis-ci.org/BMeu/Mief)
 [![Build Status on AppVeyor](https://ci.appveyor.com/api/projects/status/xxukbycd0en6kvr8?svg=true)](https://ci.appveyor.com/project/BMeu/mief)
 [![Codecov](https://codecov.io/gh/BMeu/Mief/branch/master/graph/badge.svg)](https://codecov.io/gh/BMeu/Mief)
 [![License](https://img.shields.io/github/license/BMeu/Mief.svg)](README.md)
