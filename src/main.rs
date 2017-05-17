@@ -16,7 +16,16 @@
                                            stutter, used_underscore_binding, use_debug, wrong_self_convention,
                                            wrong_pub_self_convention))]
 
+extern crate opengl_graphics;
+extern crate piston_window;
+
+mod color;
+mod game;
+
+use game::Game;
+
 /// Run `Mief`.
 fn main() {
-    println!("Hello, world!");
+    let mut game = Game::new();
+    game.run();
 }
