@@ -2,7 +2,7 @@ language: rust
 cache: cargo
 rust:
   - stable
-  # - beta
+  - beta
   - nightly
   - nightly-2017-05-03
 env:
@@ -49,5 +49,6 @@ after_success: |
   echo "Uploaded code coverage"
 matrix:
   allow_failures:
+    - rust: beta
     - rust: nightly
     - rust: nightly-2017-05-03
