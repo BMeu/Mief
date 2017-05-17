@@ -20,12 +20,19 @@ extern crate opengl_graphics;
 extern crate piston_window;
 
 mod color;
+mod error;
 mod game;
+mod quit;
 
 use game::Game;
 
 /// Run `Mief`.
 fn main() {
-    let mut game = Game::new();
+    let mut game = match Game::new() {
+        Ok(game) => game,
+        Err(error) => quit::fail_from_error(error),
+    };
     game.run();
+
+    quit::succeed();
 }

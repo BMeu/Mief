@@ -14,6 +14,7 @@ use piston_window::RenderArgs;
 use piston_window::RenderEvent;
 use piston_window::WindowSettings;
 
+use error::Result;
 use color;
 
 /// The OpenGL version.
@@ -30,17 +31,16 @@ pub struct Game {
 
 impl Game {
     /// Initialize a new game instance.
-    pub fn new() -> Game {
+    pub fn new() -> Result<Game> {
         let window: PistonWindow = WindowSettings::new("Mief", [800, 480])
             .opengl(OPENGL)
             .exit_on_esc(true)
-            .build()
-            .expect("Could not create window.");
+            .build()?;
 
-        Game {
+        Ok(Game {
             gl_graphics: GlGraphics::new(OPENGL),
             window: window,
-        }
+        })
     }
 
     /// Render the entire game.
