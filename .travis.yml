@@ -2,8 +2,6 @@ language: rust
 cache: cargo
 rust:
   - stable
-  - 1.16.0
-  - 1.15.0
   - beta
   - nightly
   - nightly-2017-05-03
