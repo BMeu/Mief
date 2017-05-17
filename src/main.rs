@@ -4,7 +4,7 @@
 // MIT license <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your option. This file may not be copied,
 // modified, or distributed except according to those terms.
 
-//! This is the main module for `Mief`.
+//! This is the main module for _Mief_.
 
 #![warn(missing_docs,
         missing_debug_implementations, missing_copy_implementations,
@@ -26,7 +26,7 @@ mod quit;
 
 use game::Game;
 
-/// Run `Mief`.
+/// Run _Mief_.
 fn main() {
     let mut game = match Game::new() {
         Ok(game) => game,
