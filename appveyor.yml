@@ -30,6 +30,7 @@ environment:
       target: i686-pc-windows-gnu
 matrix:
   allow_failures:
+    - channel: beta
     - channel: nightly
 install:
   - appveyor DownloadFile https://win.rustup.rs/ -FileName rustup-init.exe
