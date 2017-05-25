@@ -10,13 +10,10 @@ use piston_window::clear;
 use piston_window::Input;
 use piston_window::OpenGL;
 use piston_window::PistonWindow;
-use piston_window::RenderEvent;
 use piston_window::UpdateArgs;
-use piston_window::UpdateEvent;
-use piston_window::Window;
 use piston_window::WindowSettings;
 
-use elements::Ball;
+use elements::Field;
 use execution_flow::Result;
 use color;
 
@@ -28,8 +25,8 @@ pub struct Game {
     /// The game window.
     window: PistonWindow,
 
-    /// Ball.
-    ball: Ball,
+    /// The playing field.
+    field: Field,
 }
 
 impl Game {
@@ -44,35 +41,39 @@ impl Game {
 
         Ok(Game {
             window: window,
-            ball: Ball::new(window_size),
+            field: Field::new(window_size),
         })
     }
 
     /// Render the entire game.
     fn draw(&mut self, event: &Input) {
-        let ball: &mut Ball = &mut self.ball;
+        let field: &mut Field = &mut self.field;
 
         let _ = self.window.draw_2d(event, |context, gl_graphics| {
             clear(color::BLACK, gl_graphics);
 
-            ball.draw(&context, gl_graphics);
+            field.draw(&context, gl_graphics);
         });
+    }
+
+    /// Resize the entire game.
+    fn resize(&mut self, width: u32, height: u32) {
+        self.field.resize(width, height);
     }
 
     /// Update the game state.
     fn update(&mut self, update_arguments: &UpdateArgs) {
-        self.ball.update(update_arguments.dt, self.window.size().width, self.window.size().height);
+        self.field.update(update_arguments);
     }
 
     /// Run the game.
     pub fn run(&mut self) {
         while let Some(event) = self.window.next() {
-            if let Some(_render_arguments) = event.render_args() {
-                self.draw(&event);
-            }
-
-            if let Some(update_arguments) = event.update_args() {
-                self.update(&update_arguments);
+            match event {
+                Input::Render(_) => self.draw(&event),
+                Input::Resize(width, height) => self.resize(width, height),
+                Input::Update(update_arguments) => self.update(&update_arguments),
+                _ => {},
             }
         }
     }
