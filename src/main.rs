@@ -20,6 +20,7 @@ extern crate piston_window;
 #[cfg(test)]
 #[macro_use]
 extern crate quickcheck;
+extern crate rand;
 
 mod elements;
 mod color;

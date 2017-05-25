@@ -10,6 +10,9 @@ use piston_window::Context;
 use piston_window::Ellipse;
 use piston_window::G2d;
 use piston_window::Transformed;
+use rand::thread_rng;
+use rand::Rng;
+use rand::ThreadRng;
 
 use color;
 
@@ -27,12 +30,37 @@ pub struct Ball {
 }
 
 impl Ball {
-    /// Create a new ball.
-    pub fn new() -> Ball {
+    /// Create a new ball with a random speed at the center of the window (given by `[width, height]`).
+    pub fn new(window_size: [u32; 2]) -> Ball {
+        let width = window_size[0] as f64;
+        let height = window_size[1] as f64;
+
+        let radius: f64 = 5.0;
+        let mut position: (f64, f64) = (width / 2.0 - radius, height / 2.0 - radius);
+        if position.0 < 0.0 {
+            position.0 = 0.0;
+        }
+        if position.1 < 0.0 {
+            position.1 = 0.0;
+        }
+
+        // Randomly choose the speed.
+        let mininum_speed: f64 = 100.0;
+        let maximum_speed: f64 = 150.0;
+        let mut rng: ThreadRng = thread_rng();
+        let mut speed_x: f64 = rng.gen_range(mininum_speed, maximum_speed);
+        if rng.gen::<bool>() {
+            speed_x *= -1.0;
+        }
+        let mut speed_y: f64 = rng.gen_range(mininum_speed, maximum_speed);
+        if rng.gen::<bool>() {
+            speed_y *= -1.0;
+        }
+
         Ball {
-            diameter: 10.0,
-            position: (0.0, 0.0),
-            speed: (100.0, 100.0),
+            diameter: radius * 2.0,
+            position: position,
+            speed: (speed_x, speed_y),
         }
     }
 
@@ -83,20 +111,47 @@ impl Ball {
 
 #[cfg(test)]
 mod tests {
+    #![allow(trivial_casts)]
+
     use super::*;
 
-    #[test]
-    fn new() {
-        let ball = Ball::new();
-        assert_eq!(ball.diameter, 10.0);
-        assert_eq!(ball.position, (0.0, 0.0));
-        assert_eq!(ball.speed, (100.0, 100.0));
+    /// Two `f64` numbers are equal iff their difference is within `std::f64::EPSILON`.
+    fn eq_epsilon(first: f64, second: f64) -> bool {
+        first - second <= ::std::f64::EPSILON
     }
 
     quickcheck! {
-        #[allow(trivial_casts)]
+        fn new(width: u32, height: u32) -> bool {
+            let ball = Ball::new([width, height]);
+            assert_eq!(ball.diameter, 10.0);
+
+            // The window has a minimum size.
+            if (width as f64) < ball.diameter || (height as f64) < ball.diameter {
+                return true;
+            }
+
+            // The margins of the ball must be the same on each axis.
+            let left_equals_right_margin: bool = eq_epsilon(ball.position.0,
+                                                            (width as f64) - ball.position.0 + ball.diameter);
+            let top_equals_bottom_margin: bool = eq_epsilon(ball.position.1,
+                                                            (height as f64) - ball.position.1 + ball.diameter);
+
+            // The (absolute) speed in either direction should be between 100 and 150.
+            let speed_x: f64 = ball.speed.0.abs();
+            let speed_y: f64 = ball.speed.1.abs();
+            let is_valid_speed_x: bool = 100.0 <= speed_x && speed_x <= 150.0;
+            let is_valid_speed_y: bool = 100.0 <= speed_y && speed_y <= 150.0;
+
+            left_equals_right_margin &&
+                top_equals_bottom_margin &&
+                is_valid_speed_x &&
+                is_valid_speed_y
+        }
+    }
+
+    quickcheck! {
         fn update(dt: f64, width: u32, height: u32) -> bool {
-            let mut ball = Ball::new();
+            let mut ball = Ball::new([width, height]);
             ball.update(dt, width, height);
 
             // The window has a minimum size.

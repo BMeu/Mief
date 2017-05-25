@@ -35,14 +35,16 @@ pub struct Game {
 impl Game {
     /// Initialize a new game instance.
     pub fn new() -> Result<Game> {
-        let window: PistonWindow = WindowSettings::new("Mief", [800, 480])
+        let window_size: [u32; 2] = [800, 480];
+
+        let window: PistonWindow = WindowSettings::new("Mief", window_size)
             .opengl(OPENGL)
             .exit_on_esc(true)
             .build()?;
 
         Ok(Game {
             window: window,
-            ball: Ball::new(),
+            ball: Ball::new(window_size),
         })
     }
 
