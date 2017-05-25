@@ -6,14 +6,17 @@
 
 //! This module contains the game management logic.
 
-use opengl_graphics::GlGraphics;
 use piston_window::clear;
+use piston_window::Input;
 use piston_window::OpenGL;
 use piston_window::PistonWindow;
-use piston_window::RenderArgs;
 use piston_window::RenderEvent;
+use piston_window::UpdateArgs;
+use piston_window::UpdateEvent;
+use piston_window::Window;
 use piston_window::WindowSettings;
 
+use elements::Ball;
 use execution_flow::Result;
 use color;
 
@@ -25,8 +28,8 @@ pub struct Game {
     /// The game window.
     window: PistonWindow,
 
-    /// OpenGL data.
-    gl_graphics: GlGraphics,
+    /// Ball.
+    ball: Ball,
 }
 
 impl Game {
@@ -38,23 +41,36 @@ impl Game {
             .build()?;
 
         Ok(Game {
-            gl_graphics: GlGraphics::new(OPENGL),
             window: window,
+            ball: Ball::new(),
         })
     }
 
     /// Render the entire game.
-    fn render(&mut self, render_arguments: &RenderArgs) {
-        self.gl_graphics.draw(render_arguments.viewport(), |_context, gl_graphics| {
+    fn render(&mut self, event: &Input) {
+        let ball: &mut Ball = &mut self.ball;
+
+        let _ = self.window.draw_2d(event, |context, gl_graphics| {
             clear(color::BLACK, gl_graphics);
+
+            ball.draw(&context, gl_graphics);
         });
+    }
+
+    /// Update the game state.
+    fn update(&mut self, update_arguments: &UpdateArgs) {
+        self.ball.update(update_arguments.dt, self.window.size().width, self.window.size().height);
     }
 
     /// Run the game.
     pub fn run(&mut self) {
         while let Some(event) = self.window.next() {
-            if let Some(render_arguments) = event.render_args() {
-                self.render(&render_arguments);
+            if let Some(_render_arguments) = event.render_args() {
+                self.render(&event);
+            }
+
+            if let Some(update_arguments) = event.update_args() {
+                self.update(&update_arguments);
             }
         }
     }

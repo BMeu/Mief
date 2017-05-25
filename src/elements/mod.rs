@@ -4,10 +4,8 @@
 // MIT license <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your option. This file may not be copied,
 // modified, or distributed except according to those terms.
 
-//! Color definitions.
+//! This module contains all game elements such as the ball and the players.
 
-/// `#000000`.
-pub const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
+pub use self::ball::Ball;
 
-/// `#ffffff`.
-pub const WHITE: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
+mod ball;

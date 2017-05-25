@@ -14,5 +14,7 @@ categories = ["games"]
 name = "mief"
 
 [dependencies]
-piston2d-opengl_graphics = "0.43"
 piston_window = "0.65"
+
+[dev-dependencies]
+quickcheck = "0.4"
