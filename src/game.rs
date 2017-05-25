@@ -49,7 +49,7 @@ impl Game {
     }
 
     /// Render the entire game.
-    fn render(&mut self, event: &Input) {
+    fn draw(&mut self, event: &Input) {
         let ball: &mut Ball = &mut self.ball;
 
         let _ = self.window.draw_2d(event, |context, gl_graphics| {
@@ -68,7 +68,7 @@ impl Game {
     pub fn run(&mut self) {
         while let Some(event) = self.window.next() {
             if let Some(_render_arguments) = event.render_args() {
-                self.render(&event);
+                self.draw(&event);
             }
 
             if let Some(update_arguments) = event.update_args() {
