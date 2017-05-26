@@ -8,8 +8,11 @@
 
 use piston_window::Context;
 use piston_window::G2d;
+use piston_window::Line;
+use piston_window::Transformed;
 use piston_window::UpdateArgs;
 
+use color;
 use elements::Ball;
 
 /// The playing field of the game.
@@ -35,14 +38,27 @@ impl Field {
     }
 
     /// Draw the field with its contents.
-    pub fn draw(&mut self, context: &Context, graphics: &mut G2d) {
-        self.ball.draw(context, graphics);
-    }
+    pub fn draw(&mut self, context: Context, graphics: &mut G2d) {
+        let radius: f64 = 1.0;
+        let line = Line::new(color::GRAY, radius);
 
-    /// Resize the field.
-    pub fn resize(&mut self, width: u32, height: u32) {
-        self.height = height;
-        self.width = width;
+        // Draw the center line.
+        let position_x: f64 = (self.width as f64) / 2.0 - radius;
+        let number_of_dashes: u32 = 10;
+        let height: f64 = (self.height as f64) / ((number_of_dashes as f64) * 2.0 - 1.0);
+        for i in 0..number_of_dashes {
+            let position_y: f64 = (i as f64) * height * 2.0;
+            let transformation = context.transform.trans(position_x, position_y);
+            line.draw([0.0, 0.0, 0.0, height], &context.draw_state, transformation, graphics);
+        }
+
+        // Draw the bottom line.
+        let line = Line::new(color::WHITE, radius);
+        let transformation = context.transform.trans(0.0, 0.0 + radius);
+        line.draw([0.0, 0.0, self.width as f64, 0.0], &context.draw_state, transformation, graphics);
+
+        // Draw the ball.
+        self.ball.draw(&context, graphics);
     }
 
     /// Update the field state.

@@ -10,6 +10,7 @@ use piston_window::clear;
 use piston_window::Input;
 use piston_window::OpenGL;
 use piston_window::PistonWindow;
+use piston_window::Transformed;
 use piston_window::UpdateArgs;
 use piston_window::WindowSettings;
 
@@ -32,16 +33,17 @@ pub struct Game {
 impl Game {
     /// Initialize a new game instance.
     pub fn new() -> Result<Game> {
-        let window_size: [u32; 2] = [800, 480];
+        let window_size: [u32; 2] = [800, 600];
 
         let window: PistonWindow = WindowSettings::new("Mief", window_size)
             .opengl(OPENGL)
             .exit_on_esc(true)
+            .resizable(false)  // Not yet working - see https://github.com/PistonDevelopers/piston_window/issues/160.
             .build()?;
 
         Ok(Game {
             window: window,
-            field: Field::new(window_size),
+            field: Field::new([800, 480]),
         })
     }
 
@@ -52,13 +54,8 @@ impl Game {
         let _ = self.window.draw_2d(event, |context, gl_graphics| {
             clear(color::BLACK, gl_graphics);
 
-            field.draw(&context, gl_graphics);
+            field.draw(context.trans(0.0, 120.0), gl_graphics);
         });
-    }
-
-    /// Resize the entire game.
-    fn resize(&mut self, width: u32, height: u32) {
-        self.field.resize(width, height);
     }
 
     /// Update the game state.
@@ -71,7 +68,6 @@ impl Game {
         while let Some(event) = self.window.next() {
             match event {
                 Input::Render(_) => self.draw(&event),
-                Input::Resize(width, height) => self.resize(width, height),
                 Input::Update(update_arguments) => self.update(&update_arguments),
                 _ => {},
             }
