@@ -52,7 +52,7 @@ impl Field {
             line.draw([0.0, 0.0, 0.0, height], &context.draw_state, transformation, graphics);
         }
 
-        // Draw the bottom line.
+        // Draw the top line.
         let line = Line::new(color::WHITE, radius);
         let transformation = context.transform.trans(0.0, 0.0 + radius);
         line.draw([0.0, 0.0, self.width as f64, 0.0], &context.draw_state, transformation, graphics);
