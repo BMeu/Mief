@@ -8,6 +8,9 @@
 
 pub use self::ball::Ball;
 pub use self::field::Field;
+pub use self::player::Movement;
+pub use self::player::Player;
 
 mod ball;
 mod field;
+mod player;

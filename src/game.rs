@@ -7,6 +7,7 @@
 //! This module contains the game management logic.
 
 use piston_window::clear;
+use piston_window::Button;
 use piston_window::Input;
 use piston_window::OpenGL;
 use piston_window::PistonWindow;
@@ -63,10 +64,22 @@ impl Game {
         self.field.update(update_arguments);
     }
 
+    /// Handle button press events.
+    fn button_pressed(&mut self, button: Button) {
+        self.field.button_pressed(button);
+    }
+
+    /// Handle button release events.
+    fn button_released(&mut self, button: Button) {
+        self.field.button_released(button);
+    }
+
     /// Run the game.
     pub fn run(&mut self) {
         while let Some(event) = self.window.next() {
             match event {
+                Input::Press(button) => self.button_pressed(button),
+                Input::Release(button) => self.button_released(button),
                 Input::Render(_) => self.draw(&event),
                 Input::Update(update_arguments) => self.update(&update_arguments),
                 _ => {},

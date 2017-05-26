@@ -15,6 +15,7 @@ use rand::Rng;
 use rand::ThreadRng;
 
 use color;
+use elements::Player;
 
 /// The ball used for playing.
 #[derive(Clone, Copy, Debug, Default)]
@@ -65,7 +66,7 @@ impl Ball {
     }
 
     /// Draw the ball.
-    pub fn draw(&mut self, context: &Context, graphics: &mut G2d) {
+    pub fn draw(&self, context: &Context, graphics: &mut G2d) {
         let ball = Ellipse::new(color::WHITE).resolution(100);
         let transformation = context.transform.trans(self.position.0, self.position.1);
         ball.draw([0.0, 0.0, self.diameter, self.diameter], &context.draw_state, transformation, graphics);
@@ -73,14 +74,23 @@ impl Ball {
 
     /// Update the ball's position. `dt` is the change in time since the last update, `width` and `height` are the
     /// window's size.
-    pub fn update(&mut self, dt: f64, width: u32, height: u32) {
+    pub fn update(&mut self, dt: f64, width: u32, height: u32, player_1: Player, player_2: Player) {
         let progress_x = self.speed.0 * dt;
         let progress_y = self.speed.1 * dt;
 
         // Will the ball leave the window on the x-axis? If so, revert speed on x-axis.
         let leaving_on_left_side: bool = self.position.0 + progress_x < 0.0;
         let leaving_on_right_side: bool = self.position.0 + self.diameter + progress_x > width as f64;
-        if leaving_on_left_side || leaving_on_right_side {
+
+        // TODO: Check for collisions on all sides of the handle.
+        let hit_player_1: bool = self.position.0 + progress_x < player_1.get_bounding_box()[2] &&
+            self.position.1 + self.diameter / 2.0  + progress_y >= player_1.get_bounding_box()[1] &&
+            self.position.1 + self.diameter / 2.0  + progress_y <= player_1.get_bounding_box()[3];
+        let hit_player_2: bool = self.position.0 + self.diameter + progress_x > player_2.get_bounding_box()[0] &&
+            self.position.1 + self.diameter / 2.0 + progress_y >= player_2.get_bounding_box()[1] &&
+            self.position.1 + self.diameter / 2.0 + progress_y  <= player_2.get_bounding_box()[3];
+
+        if leaving_on_left_side || leaving_on_right_side || hit_player_1 || hit_player_2 {
             self.speed.0 *= -1.0;
         }
 

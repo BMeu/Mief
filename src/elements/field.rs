@@ -6,19 +6,26 @@
 
 //! This module contains the playing field.
 
+use piston_window::Button;
 use piston_window::Context;
 use piston_window::G2d;
+use piston_window::Key;
 use piston_window::Line;
 use piston_window::Transformed;
 use piston_window::UpdateArgs;
 
 use color;
 use elements::Ball;
+use elements::Movement;
+use elements::Player;
 
 /// The playing field of the game.
 pub struct Field {
     /// The ball used for playing.
     ball: Ball,
+
+    /// The players.
+    players: (Player, Player),
 
     /// The height of the field.
     height: u32,
@@ -32,6 +39,10 @@ impl Field {
     pub fn new(size: [u32; 2]) -> Field {
         Field {
             ball: Ball::new(size),
+            players: (
+                Player::new((10.0, 0.0)),
+                Player::new(((size[0] as f64) - 20.0, 0.0))
+                ),
             height: size[1],
             width: size[0],
         }
@@ -57,12 +68,41 @@ impl Field {
         let transformation = context.transform.trans(0.0, 0.0 + radius);
         line.draw([0.0, 0.0, self.width as f64, 0.0], &context.draw_state, transformation, graphics);
 
+        self.players.0.draw(&context, graphics);
+        self.players.1.draw(&context, graphics);
+
         // Draw the ball.
         self.ball.draw(&context, graphics);
     }
 
     /// Update the field state.
     pub fn update(&mut self, update_arguments: &UpdateArgs) {
-        self.ball.update(update_arguments.dt, self.width, self.height);
+        self.players.0.update(update_arguments.dt, self.height);
+        self.players.1.update(update_arguments.dt, self.height);
+        self.ball.update(update_arguments.dt, self.width, self.height, self.players.0, self.players.1);
+    }
+
+    /// Handle button press events.
+    pub fn button_pressed(&mut self, button: Button) {
+        if let Button::Keyboard(key) = button {
+            match key {
+                Key::W => self.players.0.set_movement(Movement::Up),
+                Key::S => self.players.0.set_movement(Movement::Down),
+                Key::Up => self.players.1.set_movement(Movement::Up),
+                Key::Down => self.players.1.set_movement(Movement::Down),
+                _ => {},
+            }
+        }
+    }
+
+    /// Handle button release events.
+    pub fn button_released(&mut self, button: Button) {
+        if let Button::Keyboard(key) = button {
+            match key {
+                Key::W | Key::S => self.players.0.set_movement(Movement::None),
+                Key::Up | Key::Down => self.players.1.set_movement(Movement::None),
+                _ => {},
+            }
+        }
     }
 }
