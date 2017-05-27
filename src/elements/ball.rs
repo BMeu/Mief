@@ -74,23 +74,25 @@ impl Ball {
 
     /// Update the ball's position. `dt` is the change in time since the last update, `width` and `height` are the
     /// window's size.
-    pub fn update(&mut self, dt: f64, width: u32, height: u32, player_1: Player, player_2: Player) {
+    pub fn update(&mut self, dt: f64, width: u32, height: u32, left_player: Player, right_player: Player) {
         let progress_x = self.speed.0 * dt;
         let progress_y = self.speed.1 * dt;
+        let next_position: (f64, f64) = (self.position.0 + progress_x, self.position.1 + progress_y);
 
+        // If the ball moves to the left, check for collisions with the player on the left side of the screen, otherwise
+        // check for collision with the player on the right side of the screen.
+        let player_handle: [f64; 4] = if self.speed.0 <= 0.0 {
+            left_player.get_bounding_box()
+        } else {
+            right_player.get_bounding_box()
+        };
+        self.check_collision(next_position, player_handle);
+
+        // TODO: If the ball leaves the screen on the left or right side, the other player will get a point.
         // Will the ball leave the window on the x-axis? If so, revert speed on x-axis.
         let leaving_on_left_side: bool = self.position.0 + progress_x < 0.0;
         let leaving_on_right_side: bool = self.position.0 + self.diameter + progress_x > width as f64;
-
-        // TODO: Check for collisions on all sides of the handle.
-        let hit_player_1: bool = self.position.0 + progress_x < player_1.get_bounding_box()[2] &&
-            self.position.1 + self.diameter / 2.0  + progress_y >= player_1.get_bounding_box()[1] &&
-            self.position.1 + self.diameter / 2.0  + progress_y <= player_1.get_bounding_box()[3];
-        let hit_player_2: bool = self.position.0 + self.diameter + progress_x > player_2.get_bounding_box()[0] &&
-            self.position.1 + self.diameter / 2.0 + progress_y >= player_2.get_bounding_box()[1] &&
-            self.position.1 + self.diameter / 2.0 + progress_y  <= player_2.get_bounding_box()[3];
-
-        if leaving_on_left_side || leaving_on_right_side || hit_player_1 || hit_player_2 {
+        if leaving_on_left_side || leaving_on_right_side {
             self.speed.0 *= -1.0;
         }
 
@@ -115,6 +117,37 @@ impl Ball {
             self.position.1 = 0.0;
         } else if self.position.1 + self.diameter > height as f64 {
             self.position.1 = (height as f64) - self.diameter;
+        }
+    }
+
+    /// Check if the ball will collide with the `other_object`'s bounding box at `next_position` and reverse the ball's
+    /// direction accordingly.
+    fn check_collision(&mut self, next_position: (f64, f64), other_object: [f64; 4]) {
+        let radius: f64 = self.diameter / 2.0;
+        let (x, y): (f64, f64) = next_position;
+
+        // Use more obvious names for the other object's position.
+        let (left_x, top_y, right_x, bottom_y) = (other_object[0], other_object[1], other_object[2], other_object[3]);
+
+        // Did the ball hit the object from the top or bottom?
+        let hit_upper_or_lower_edge: bool =
+            x + radius >= left_x &&                       // The ball must be within the other object's width.
+            x + radius <= right_x &&
+            y + self.diameter >= top_y &&                 // The ball must not be above the object.
+            y <= bottom_y;                                // The ball must not be below the object.
+
+        // Did the ball hit the object on the left or right side?
+        let hit_lateral_edge: bool =
+            y + radius >= top_y &&                        // The ball must be within the other object's height.
+            y + radius <= bottom_y &&
+            x + self.diameter >= left_x &&                // Is the ball's right edge behind the object's left edge?
+            x <= right_x;                                 // The ball must not be to the right of the object.
+
+        if hit_upper_or_lower_edge {
+            self.speed.1 *= -1.0;
+        }
+        if hit_lateral_edge {
+            self.speed.0 *= -1.0;
         }
     }
 }
