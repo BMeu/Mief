@@ -37,9 +37,8 @@ impl Arbitrary for Movement {
         let mode = g.gen_range(0, 3);
         match mode {
             0 => Movement::Down,
-            1 => Movement::None,
-            2 => Movement::Up,
-            _ => unreachable!()
+            1 => Movement::Up,
+            _ => Movement::None,
         }
     }
 }
