@@ -245,4 +245,20 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn update_score_upper_overflow() {
+        let mut player = Player::new((0.0, 0.0));
+        player.score = ::std::isize::MAX;
+        player.update_score(1);
+        assert_eq!(player.score, ::std::isize::MAX);
+    }
+
+    #[test]
+    fn update_score_lower_overflow() {
+        let mut player = Player::new((0.0, 0.0));
+        player.score = ::std::isize::MIN;
+        player.update_score(-1);
+        assert_eq!(player.score, ::std::isize::MIN);
+    }
 }
