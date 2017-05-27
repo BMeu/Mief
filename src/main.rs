@@ -23,21 +23,21 @@ extern crate piston_window;
 extern crate quickcheck;
 extern crate rand;
 
+mod application;
 mod elements;
-mod color;
 mod execution_flow;
-mod game;
+mod color;
 
+use application::Application;
 use execution_flow::exit;
-use game::Game;
 
 /// Run _Mief_.
 fn main() {
-    let mut game = match Game::new() {
-        Ok(game) => game,
+    let mut application = match Application::new() {
+        Ok(application) => application,
         Err(error) => exit::fail_from_error(error),
     };
-    game.run();
+    application.run();
 
     exit::succeed();
 }

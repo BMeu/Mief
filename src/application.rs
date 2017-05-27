@@ -4,7 +4,7 @@
 // MIT license <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your option. This file may not be copied,
 // modified, or distributed except according to those terms.
 
-//! This module contains the game management logic.
+//! This module contains the application management logic.
 
 use piston_window::clear;
 use piston_window::Button;
@@ -22,18 +22,18 @@ use color;
 /// The OpenGL version.
 const OPENGL: OpenGL = OpenGL::V3_2;
 
-/// A struct managing the game logic.
-pub struct Game {
-    /// The game window.
+/// A struct managing the application logic.
+pub struct Application {
+    /// The application window.
     window: PistonWindow,
 
     /// The playing field.
     field: Field,
 }
 
-impl Game {
+impl Application {
     /// Initialize a new game instance.
-    pub fn new() -> Result<Game> {
+    pub fn new() -> Result<Application> {
         let window_size: [u32; 2] = [800, 600];
 
         let window: PistonWindow = WindowSettings::new("Mief", window_size)
@@ -42,7 +42,7 @@ impl Game {
             .resizable(false)  // Not yet working - see https://github.com/PistonDevelopers/piston_window/issues/160.
             .build()?;
 
-        Ok(Game {
+        Ok(Application {
             window: window,
             field: Field::new([800, 480]),
         })
