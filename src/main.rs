@@ -23,6 +23,7 @@
                                            stutter, used_underscore_binding, use_debug, wrong_self_convention,
                                            wrong_pub_self_convention))]
 
+extern crate find_folder;
 extern crate piston_window;
 #[cfg(test)]
 #[macro_use]

@@ -49,6 +49,14 @@ impl Field {
         }
     }
 
+    /// Get the scores of all players.
+    pub fn get_player_scores(&self) -> [isize; 2] {
+        [
+            self.players[0].get_score(),
+            self.players[1].get_score(),
+        ]
+    }
+
     /// Handle button press events.
     pub fn on_button_pressed(&mut self, button: Button) {
         if let Button::Keyboard(key) = button {
@@ -132,5 +140,26 @@ impl Field {
 
         // The ball left the field. Create a new one.
         self.ball = Ball::new([self.width, self.height]);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn new() {
+        let field = Field::new([200, 100]);
+        assert_eq!(field.width, 200);
+        assert_eq!(field.height, 100);
+    }
+
+    #[test]
+    fn get_player_scores() {
+        let mut field = Field::new([200, 100]);
+        field.players[0].update_score(42);
+        field.players[1].update_score(-42);
+        let scores: [isize; 2] = field.get_player_scores();
+        assert_eq!(scores, [42, -42]);
     }
 }

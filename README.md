@@ -11,6 +11,10 @@ Mief is a Pong clone written in Rust.
 
 ## License
 
+Unless stated otherwise, the following licenses apply:
+
+### Source Code
+
 `Mief` is licensed under either of
 
  * Apache License, Version 2.0, ([`LICENSE-APACHE`](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
@@ -18,8 +22,13 @@ Mief is a Pong clone written in Rust.
 
 at your option.
 
-### Contribution
+#### Contribution
 
 Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any
 additional terms or conditions.
+
+### Assets
+
+* Font [`Anonymous Pro`](https://fontlibrary.org/en/font/anonymous-pro) by Mark Simonson, 2009, is licensed under the 
+  [SIL Open Font License](http://scripts.sil.org/OFL).

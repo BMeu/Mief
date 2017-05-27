@@ -93,6 +93,11 @@ impl Player {
         ]
     }
 
+    /// Get the player's current score.
+    pub fn get_score(&self) -> isize {
+        self.score
+    }
+
     /// Move the player.
     pub fn set_movement(&mut self, movement: Movement) {
         self.movement = movement;
@@ -162,6 +167,14 @@ mod tests {
         assert_eq!(bounding_box[1], 13.37);
         assert_eq!(bounding_box[2], 52.0);
         assert_eq!(bounding_box[3], 73.37);
+    }
+
+    #[test]
+    fn get_score() {
+        let mut player = Player::new((42.0, 13.37));
+        let score: isize = 42;
+        player.score = score;
+        assert_eq!(player.get_score(), score);
     }
 
     quickcheck! {

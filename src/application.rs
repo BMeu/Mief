@@ -6,14 +6,21 @@
 
 //! The highest abstraction of the application logic, including window creation.
 
+use std::path::PathBuf;
+
+use find_folder::Search;
 use piston_window::clear;
 use piston_window::Button;
+use piston_window::Glyphs;
 use piston_window::Input;
 use piston_window::OpenGL;
 use piston_window::PistonWindow;
+use piston_window::RenderArgs;
 use piston_window::Transformed;
 use piston_window::UpdateArgs;
 use piston_window::WindowSettings;
+use piston_window::character::CharacterCache;
+use piston_window::text::Text;
 
 use elements::Field;
 use execution_flow::Result;
@@ -24,6 +31,9 @@ const OPENGL: OpenGL = OpenGL::V3_2;
 
 /// The manager of the application logic.
 pub struct Application {
+    /// Path to the folder containing the assets.
+    assets: PathBuf,
+
     /// The application window.
     window: PistonWindow,
 
@@ -44,7 +54,10 @@ impl Application {
             .resizable(false)  // Not yet working - see https://github.com/PistonDevelopers/piston_window/issues/160.
             .build()?;
 
+        let assets: PathBuf = Search::ParentsThenKids(1, 1).for_folder("assets")?;
+
         Ok(Application {
+            assets: assets,
             window: window,
             field: Field::new([800, 480]),
         })
@@ -61,13 +74,41 @@ impl Application {
     }
 
     /// Render the entire application.
-    fn on_render(&mut self, event: &Input) {
+    fn on_render(&mut self, event: &Input, render_arguments: &RenderArgs) {
+        let font: PathBuf = self.assets.join("Anonymous Pro.ttf");
+        let factory = self.window.factory.clone();
+        let mut font = Glyphs::new(font, factory).unwrap();
+        let font_size: u32 = 60;
+
         let field: &mut Field = &mut self.field;
 
         let _ = self.window.draw_2d(event, |context, gl_graphics| {
             clear(color::BLACK, gl_graphics);
 
             field.on_render(context.trans(0.0, 120.0), gl_graphics);
+
+            // Draw the title.
+            let title_text: &str = "Mief";
+            let title_width: f64 = font.width(font_size, title_text);
+            let title = Text::new_color(color::WHITE, font_size);
+            let transformation = context.transform.trans(((render_arguments.width as f64) - title_width) / 2.0, 90.0);
+            title.draw("Mief", &mut font, &context.draw_state, transformation, gl_graphics);
+
+            // Get the scores.
+            let scores: [isize; 2] = field.get_player_scores();
+            let left_score: &str = &scores[0].to_string();
+            let right_score: &str = &scores[1].to_string();
+
+            // Draw the left player's score.
+            let score = Text::new_color(color::WHITE, font_size);
+            let transformation = context.transform.trans(10.0, 90.0);
+            score.draw(left_score, &mut font, &context.draw_state, transformation, gl_graphics);
+
+            // Draw the right player's score.
+            let right_score_width: f64 = font.width(font_size, right_score);
+            let score = Text::new_color(color::WHITE, font_size);
+            let transformation = context.transform.trans((render_arguments.width as f64) - right_score_width - 10.0, 90.0);
+            score.draw(right_score, &mut font, &context.draw_state, transformation, gl_graphics);
         });
     }
 
@@ -82,7 +123,7 @@ impl Application {
             match event {
                 Input::Press(button) => self.on_button_pressed(button),
                 Input::Release(button) => self.on_button_released(button),
-                Input::Render(_) => self.on_render(&event),
+                Input::Render(render_arguments) => self.on_render(&event, &render_arguments),
                 Input::Update(update_arguments) => self.on_update(&update_arguments),
                 _ => {},
             }

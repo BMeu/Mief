@@ -8,12 +8,17 @@
 
 use std::fmt;
 
+use find_folder::Error as FindFolderError;
+
 /// A specialized `Result` type for _Mief_.
 pub type Result<T> = ::std::result::Result<T, Error>;
 
 /// A wrapper type for all errors caused by _Mief_.
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub enum Error {
+    /// Errors caused by faulty I/O operations.
+    IO(FindFolderError),
+
     /// Errors caused by Piston.
     Piston(String),
 }
@@ -21,6 +26,7 @@ pub enum Error {
 impl fmt::Display for Error {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match *self {
+            Error::IO(ref error) => error.fmt(formatter),
             Error::Piston(ref error) => error.fmt(formatter),
         }
     }
@@ -29,14 +35,22 @@ impl fmt::Display for Error {
 impl ::std::error::Error for Error {
     fn cause(&self) -> Option<&::std::error::Error> {
         match *self {
+            Error::IO(ref error) => Some(error),
             Error::Piston(_) => None,
         }
     }
 
     fn description(&self) -> &str {
         match *self {
+            Error::IO(ref error) => error.description(),
             Error::Piston(ref error) => error,
         }
+    }
+}
+
+impl From<FindFolderError> for Error {
+    fn from(error: FindFolderError) -> Error {
+        Error::IO(error)
     }
 }
 
@@ -49,13 +63,26 @@ impl From<String> for Error {
 #[cfg(test)]
 mod tests {
     use std::error::Error as ErrorTrait;
+    use find_folder::Error as FindFolderError;
     use super::*;
+
+    #[test]
+    fn cause_io() {
+        let error = Error::IO(FindFolderError::NotFound);
+        assert!(error.cause().is_some(), "Piston errors do not have a cause.");
+    }
 
     #[test]
     fn cause_piston() {
         let message: &str = "Piston Failure";
         let error = Error::Piston(String::from(message));
         assert!(error.cause().is_none(), "Piston errors do not have a cause.");
+    }
+
+    #[test]
+    fn description_io() {
+        let error = Error::IO(FindFolderError::NotFound);
+        assert_eq!(error.description(), String::from("The folder could not be found"));
     }
 
     #[test]
@@ -66,6 +93,12 @@ mod tests {
     }
 
     #[test]
+    fn fmt_display_io() {
+        let error = Error::IO(FindFolderError::NotFound);
+        assert_eq!(format!("{}", error), "NotFound\n");
+    }
+
+    #[test]
     fn fmt_display_piston() {
         let message: &str = "Piston Failure";
         let error = Error::Piston(String::from(message));
@@ -73,10 +106,20 @@ mod tests {
     }
 
     #[test]
+    fn from_find_folder_error() {
+        let error = Error::IO(FindFolderError::NotFound);
+        match Error::from(error) {
+            Error::IO(_) => assert!(true, "Expected IO failure."),
+            _ => assert!(false, "Expected IO failure."),
+        }
+    }
+
+    #[test]
     fn from_string() {
         let message = String::from("Piston Failure");
         match Error::from(message) {
-            Error::Piston(_) => assert!(true, "Expected Piston failure.")
+            Error::Piston(_) => assert!(true, "Expected Piston failure."),
+            _ => assert!(false, "Expected Piston failure."),
         }
     }
 }

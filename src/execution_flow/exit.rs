@@ -6,6 +6,7 @@
 
 //! Quit the application with standardized exit codes.
 
+use std::error::Error as ErrorTrait;
 use std::process;
 
 use execution_flow::Error;
@@ -18,14 +19,16 @@ pub enum Code {
 
     /// Failure of the Piston game engine (Code: `1`).
     PistonFailure = 1,
+
+    /// Failure during I/O operations (Code: `2`).
+    IOFailure = 2,
 }
 
 /// Quit the program execution. The exit code and message are chosen based on `error`.
 pub fn fail_from_error(error: Error) -> ! {
     match error {
-        Error::Piston(message) => {
-            fail_with_message(Code::PistonFailure, &message);
-        }
+        Error::IO(error) => fail_with_message(Code::IOFailure, error.description()),
+        Error::Piston(message) => fail_with_message(Code::PistonFailure, &message)
     }
 }
 

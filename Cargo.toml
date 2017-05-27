@@ -14,6 +14,7 @@ categories = ["games"]
 name = "mief"
 
 [dependencies]
+find_folder = "0.3"
 piston_window = "0.65"
 rand = "0.3"
 
