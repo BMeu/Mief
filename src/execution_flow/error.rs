@@ -108,18 +108,20 @@ mod tests {
     #[test]
     fn from_find_folder_error() {
         let error = Error::IO(FindFolderError::NotFound);
-        match Error::from(error) {
-            Error::IO(_) => assert!(true, "Expected IO failure."),
-            _ => assert!(false, "Expected IO failure."),
+        let mut is_io_error: bool = false;
+        if let Error::IO(_) = Error::from(error) {
+            is_io_error = true;
         }
+        assert!(is_io_error, "Expected IO failure.");
     }
 
     #[test]
     fn from_string() {
         let message = String::from("Piston Failure");
-        match Error::from(message) {
-            Error::Piston(_) => assert!(true, "Expected Piston failure."),
-            _ => assert!(false, "Expected Piston failure."),
+        let mut is_piston_error: bool = false;
+        if let Error::Piston(_) = Error::from(message) {
+            is_piston_error = true;
         }
+        assert!(is_piston_error, "Expected Piston failure.");
     }
 }
