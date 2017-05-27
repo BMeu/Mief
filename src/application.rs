@@ -4,7 +4,7 @@
 // MIT license <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your option. This file may not be copied,
 // modified, or distributed except according to those terms.
 
-//! This module contains the application management logic.
+//! The highest abstraction of the application logic, including window creation.
 
 use piston_window::clear;
 use piston_window::Button;
@@ -22,7 +22,7 @@ use color;
 /// The OpenGL version.
 const OPENGL: OpenGL = OpenGL::V3_2;
 
-/// A struct managing the application logic.
+/// The manager of the application logic.
 pub struct Application {
     /// The application window.
     window: PistonWindow,
@@ -32,7 +32,9 @@ pub struct Application {
 }
 
 impl Application {
-    /// Initialize a new game instance.
+    /// Initialize a new application.
+    ///
+    /// Returns an error if the `PistonWindow` cannot be initialized.
     pub fn new() -> Result<Application> {
         let window_size: [u32; 2] = [800, 600];
 
@@ -74,7 +76,7 @@ impl Application {
         self.field.on_update(update_arguments);
     }
 
-    /// Run the game.
+    /// Run the application.
     pub fn run(&mut self) {
         while let Some(event) = self.window.next() {
             match event {

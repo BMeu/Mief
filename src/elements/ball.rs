@@ -4,7 +4,7 @@
 // MIT license <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your option. This file may not be copied,
 // modified, or distributed except according to those terms.
 
-//! This module contains the ball.
+//! The ball used for playing and directly associated structures.
 
 use piston_window::Context;
 use piston_window::Ellipse;
@@ -16,7 +16,7 @@ use rand::ThreadRng;
 
 use color;
 
-/// The status of the ball.
+/// The current status of the ball.
 #[cfg_attr(feature = "cargo-clippy", allow(stutter))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum BallStatus {

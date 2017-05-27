@@ -4,7 +4,7 @@
 // MIT license <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your option. This file may not be copied,
 // modified, or distributed except according to those terms.
 
-//! This module contains the playing field.
+//! The playing field of the game.
 
 use piston_window::Button;
 use piston_window::Context;
@@ -20,7 +20,7 @@ use elements::BallStatus;
 use elements::Movement;
 use elements::Player;
 
-/// The playing field of the game.
+/// The field where the game actually occurs.
 pub struct Field {
     /// The ball used for playing.
     ball: Ball,

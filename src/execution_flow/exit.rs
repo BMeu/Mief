@@ -4,7 +4,7 @@
 // MIT license <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your option. This file may not be copied,
 // modified, or distributed except according to those terms.
 
-//! Quit the game with standardized exit codes.
+//! Quit the application with standardized exit codes.
 
 use std::process;
 
@@ -20,7 +20,7 @@ pub enum Code {
     PistonFailure = 1,
 }
 
-/// Quit the program execution. The exit code and message are chosen based on `execution_flow`.
+/// Quit the program execution. The exit code and message are chosen based on `error`.
 pub fn fail_from_error(error: Error) -> ! {
     match error {
         Error::Piston(message) => {

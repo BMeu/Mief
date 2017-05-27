@@ -4,7 +4,7 @@
 // MIT license <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your option. This file may not be copied,
 // modified, or distributed except according to those terms.
 
-//! This module contains the player.
+//! The player and directly associated structures.
 
 use piston_window::Context;
 use piston_window::G2d;
@@ -53,13 +53,13 @@ pub struct Player {
     /// The current position of the player: `(x, y)`.
     position: (f64, f64),
 
-    /// The points the player achieved.
+    /// The points the player achieved so far.
     score: isize,
 
     /// The size of the player's handle: `(width, height)`.
     size: (f64, f64),
 
-    /// The current speed of the player (the player can only move in y-direction).
+    /// The current speed of the player (the player can only move in `y`-direction).
     speed: f64,
 }
 

@@ -6,11 +6,11 @@
 
 //! Color definitions.
 
-/// `#000000`.
+/// `#000000`, `100%` opacity.
 pub const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
 
-/// `#808080`.
+/// `#808080`, `100%` opacity.
 pub const GRAY: [f32; 4] = [0.5, 0.5, 0.5, 1.0];
 
-/// `#ffffff`.
+/// `#ffffff`, `100%` opacity.
 pub const WHITE: [f32; 4] = [1.0, 1.0, 1.0, 1.0];

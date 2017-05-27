@@ -4,7 +4,7 @@
 // MIT license <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your option. This file may not be copied,
 // modified, or distributed except according to those terms.
 
-//! Functions and types modifying the normal flow of the program execution.
+//! Functions and types modifying the normal program execution flow.
 
 mod error;
 pub mod exit;
