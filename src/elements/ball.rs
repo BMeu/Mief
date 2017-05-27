@@ -202,30 +202,84 @@ mod tests {
         }
     }
 
-    quickcheck! {
-        fn update(dt: f64, width: u32, height: u32) -> TestResult {
-            let mut ball = Ball::new([width, height]);
+    #[test]
+    fn update_no_collision() {
+        let (width, height): (u32, u32) = (100, 100);
+        let speed: (f64, f64) = (100.0, 100.0);
+        let mut ball = Ball::new([width, height]);
+        ball.speed = speed;
+        assert_eq!(ball.position, (45.0, 45.0));
 
-            // The window has a minimum size.
-            if (width as f64) < ball.diameter || (height as f64) < ball.diameter || dt.is_sign_negative() {
-                return TestResult::discard();
-            }
+        let status = ball.update(0.1, width, height, &[]);
+        assert_eq!(status, BallStatus::WithinGame);
+        assert_eq!(ball.speed, speed);
+        assert_eq!(ball.position, (55.0, 55.0));
+    }
 
-            let status: BallStatus = ball.update(dt, width, height, &[]);
+    #[test]
+    fn update_reflect_on_top() {
+        let (width, height): (u32, u32) = (100, 100);
+        let mut ball = Ball::new([width, height]);
+        ball.speed = (100.0, -100.0);
+        ball.position = (45.0, 5.0);
 
-            let leaving_on_left_side: bool = ball.position.0 + ball.speed.0 * dt <= 0.0;
-            let leaving_on_right_side: bool = ball.position.0 + ball.diameter  + ball.speed.0 * dt >= width as f64;
-            if leaving_on_left_side {
-                return TestResult::from_bool(status == BallStatus::LeftOnLeftSide);
-            }
-            if leaving_on_right_side {
-                return TestResult::from_bool(status == BallStatus::LeftOnRightSide);
-            }
+        let status = ball.update(0.1, width, height, &[]);
+        assert_eq!(status, BallStatus::WithinGame);
+        assert_eq!(ball.speed, (100.0, 100.0));
+        assert_eq!(ball.position, (55.0, 15.0));
+    }
 
-            let not_leaving_on_top: bool = ball.position.1 >= 0.0;
-            let not_leaving_on_bottom: bool = ball.position.1 + ball.diameter <= height as f64;
-            TestResult::from_bool(not_leaving_on_top && not_leaving_on_bottom)
-        }
+    #[test]
+    fn update_reflect_on_bottom() {
+        let (width, height): (u32, u32) = (100, 100);
+        let mut ball = Ball::new([width, height]);
+        ball.speed = (100.0, 100.0);
+        ball.position = (45.0, 95.0);
+
+        let status = ball.update(0.1, width, height, &[]);
+        assert_eq!(status, BallStatus::WithinGame);
+        assert_eq!(ball.speed, (100.0, -100.0));
+        assert_eq!(ball.position, (55.0, 85.0));
+    }
+
+    #[test]
+    fn update_leave_on_left() {
+        let (width, height): (u32, u32) = (100, 100);
+        let mut ball = Ball::new([width, height]);
+        ball.speed = (-100.0, 100.0);
+        ball.position = (5.0, 45.0);
+
+        let status = ball.update(0.1, width, height, &[]);
+        assert_eq!(status, BallStatus::LeftOnLeftSide);
+        assert_eq!(ball.speed, (-100.0, 100.0));
+        assert_eq!(ball.position, (5.0, 45.0));
+    }
+
+    #[test]
+    fn update_leave_on_right() {
+        let (width, height): (u32, u32) = (100, 100);
+        let mut ball = Ball::new([width, height]);
+        ball.speed = (100.0, 100.0);
+        ball.position = (95.0, 45.0);
+
+        let status = ball.update(0.1, width, height, &[]);
+        assert_eq!(status, BallStatus::LeftOnRightSide);
+        assert_eq!(ball.speed, (100.0, 100.0));
+        assert_eq!(ball.position, (95.0, 45.0));
+    }
+
+    #[test]
+    fn update_collide() {
+        let (width, height): (u32, u32) = (100, 100);
+        let object: [f64; 4] = [45.0, 45.0, 55.0, 55.0];
+        let mut ball = Ball::new([width, height]);
+        ball.speed = (-100.0, 100.0);
+        ball.position = (65.0, 40.0);
+
+        let status = ball.update(0.1, width, height, &[object]);
+        assert_eq!(status, BallStatus::WithinGame);
+        assert_eq!(ball.speed, (100.0, 100.0));
+        assert_eq!(ball.position, (75.0, 50.0));
     }
 
     #[test]
