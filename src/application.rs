@@ -54,7 +54,7 @@ impl Application {
             .resizable(false)  // Not yet working - see https://github.com/PistonDevelopers/piston_window/issues/160.
             .build()?;
 
-        let assets: PathBuf = Search::ParentsThenKids(1, 1).for_folder("assets")?;
+        let assets: PathBuf = Search::ParentsThenKids(3, 1).for_folder("assets")?;
 
         Ok(Application {
             assets: assets,
