@@ -111,7 +111,7 @@ impl Player {
     /// If the new score would overflow (in either direction), the score is set to `isize::MAX` or `isize::MIN`,
     /// respectively.
     pub fn update_score(&mut self, additional_points: isize) {
-        // Do not let the player cheat by overflowing in either direction.
+        // Do not let the player cheat by preventing overflows in either direction.
         match self.score.checked_add(additional_points) {
             Some(new_score) => self.score = new_score,
             None => {
