@@ -6,8 +6,8 @@
 
 //! Functions and types modifying the normal flow of the program execution.
 
-pub use self::error::Error;
-pub use self::error::Result;
-
 mod error;
 pub mod exit;
+
+pub use self::error::Error;
+pub use self::error::Result;

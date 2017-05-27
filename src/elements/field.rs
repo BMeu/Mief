@@ -16,9 +16,9 @@ use piston_window::UpdateArgs;
 
 use color;
 use elements::Ball;
+use elements::BallStatus;
 use elements::Movement;
 use elements::Player;
-use elements::BallStatus;
 
 /// The playing field of the game.
 pub struct Field {

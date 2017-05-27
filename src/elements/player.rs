@@ -7,8 +7,8 @@
 //! This module contains the player.
 //!
 use piston_window::Context;
-use piston_window::Rectangle;
 use piston_window::G2d;
+use piston_window::Rectangle;
 use piston_window::Transformed;
 #[cfg(test)]
 use quickcheck::Arbitrary;
