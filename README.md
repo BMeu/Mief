@@ -9,6 +9,43 @@ Mief is a Pong clone written in Rust.
 
 **WORK IN PROGRESS**
 
+## Usage
+
+1. Installation:
+   1. [Install Rust](https://rustup.rs/)
+   2. Download _Mief_: `git clone https://github.com/BMeu/Mief.git; cd Mief`
+2. Run _Mief_: `cargo run --release`
+
+## Instructions
+
+The goal is pretty simple: prevent the ball from leaving the field on your side. Each player controls a handle
+(player 1 the left one, player 2 the right one). Move the handle up and down to return the ball to the other player.
+
+Currently, _Mief_ only supports an endless mode - just play as long as you want. The game starts immediately after
+starting _Mief_, and if you miss a ball, the next one will start immediately in the center of the field. If you want to
+start a completely new game, you will have to quit and restart _Mief_.
+
+### Controls
+
+* Player 1:
+  * Up: `W`
+  * Down: `S`
+* Player 2:
+  * Up: `Up`
+  * Down: `Down`
+* Quit: `Esc`
+
+## Future
+
+[ ] Adjust field size when resizing the window
+[ ] Do not immediately start the game and new balls
+[ ] Customizable settings
+[ ] Add a main menu, in-game instructions, settings, ...
+[ ] Select game mode: endless, reach `x` points, difference of `x`, ...
+[ ] Add difficulties (e.g. speed of handles and ball, size of handles, multi-ball, freely move handles)
+[ ] Add a 4-player mode: square field, player on each side
+[ ] Add controller support
+
 ## License
 
 Unless stated otherwise, the following licenses apply:
