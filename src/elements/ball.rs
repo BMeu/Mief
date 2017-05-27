@@ -94,7 +94,7 @@ impl Ball {
 
         // Check for collisions with any obstacles.
         for obstacle in obstacles {
-            self.check_collision(next_position, obstacle);
+            self.collide_with(next_position, obstacle);
         }
 
         // Will the ball leave the window on the x-axis? If so, it is a point for the other side's player.
@@ -128,14 +128,14 @@ impl Ball {
         BallStatus::WithinGame
     }
 
-    /// Check if the ball will collide with the `other_object`'s bounding box at `next_position` and reverse the ball's
+    /// Check if the ball will collide with `object`'s bounding box at `next_position` and reverse the ball's
     /// direction accordingly.
-    fn check_collision(&mut self, next_position: (f64, f64), other_object: &[f64; 4]) {
+    fn collide_with(&mut self, next_position: (f64, f64), object: &[f64; 4]) {
         let radius: f64 = self.diameter / 2.0;
         let (x, y): (f64, f64) = next_position;
 
         // Use more obvious names for the other object's position.
-        let (left_x, top_y, right_x, bottom_y) = (other_object[0], other_object[1], other_object[2], other_object[3]);
+        let (left_x, top_y, right_x, bottom_y) = (object[0], object[1], object[2], object[3]);
 
         // Did the ball hit the object from the top or bottom?
         let hit_horizontal_edge: bool =
@@ -229,52 +229,52 @@ mod tests {
     }
 
     #[test]
-    fn check_collision_no_collision() {
+    fn collide_with_no_collision() {
         let mut ball = Ball::new([100, 100]);
         let old_speed: (f64, f64) = ball.speed;
         let object: [f64; 4] = [75.0, 75.0, 85.0, 85.0];
 
-        ball.check_collision((25.0, 25.0), &object);
+        ball.collide_with((25.0, 25.0), &object);
         assert_eq!(ball.speed, old_speed);
     }
 
     #[test]
-    fn check_collision_on_top() {
+    fn collide_with_on_top() {
         let mut ball = Ball::new([100, 100]);
         let old_speed: (f64, f64) = ball.speed;
         let object: [f64; 4] = [75.0, 75.0, 85.0, 85.0];
 
-        ball.check_collision((80.0, 65.0), &object);
+        ball.collide_with((80.0, 65.0), &object);
         assert_eq!(ball.speed, (old_speed.0, old_speed.1 * -1.0));
     }
 
     #[test]
-    fn check_collision_on_right() {
+    fn collide_with_on_right() {
         let mut ball = Ball::new([100, 100]);
         let old_speed: (f64, f64) = ball.speed;
         let object: [f64; 4] = [75.0, 75.0, 85.0, 85.0];
 
-        ball.check_collision((85.0, 80.0), &object);
+        ball.collide_with((85.0, 80.0), &object);
         assert_eq!(ball.speed, (old_speed.0 * -1.0, old_speed.1));
     }
 
     #[test]
-    fn check_collision_on_bottom() {
+    fn collide_with_on_bottom() {
         let mut ball = Ball::new([100, 100]);
         let old_speed: (f64, f64) = ball.speed;
         let object: [f64; 4] = [75.0, 75.0, 85.0, 85.0];
 
-        ball.check_collision((80.0, 85.0), &object);
+        ball.collide_with((80.0, 85.0), &object);
         assert_eq!(ball.speed, (old_speed.0, old_speed.1 * -1.0));
     }
 
     #[test]
-    fn check_collision_on_left() {
+    fn collide_with_on_left() {
         let mut ball = Ball::new([100, 100]);
         let old_speed: (f64, f64) = ball.speed;
         let object: [f64; 4] = [75.0, 75.0, 85.0, 85.0];
 
-        ball.check_collision((65.0, 80.0), &object);
+        ball.collide_with((65.0, 80.0), &object);
         assert_eq!(ball.speed, (old_speed.0 * -1.0, old_speed.1));
     }
 }

@@ -5,7 +5,7 @@
 // modified, or distributed except according to those terms.
 
 //! This module contains the player.
-//!
+
 use piston_window::Context;
 use piston_window::G2d;
 use piston_window::Rectangle;
@@ -64,7 +64,7 @@ pub struct Player {
 }
 
 impl Player {
-    /// Crate a new player at position `(x, y)`.
+    /// Create a new player at position `(x, y)`.
     pub fn new(position: (f64, f64)) -> Player {
         Player {
             movement: Movement::None,
@@ -80,6 +80,22 @@ impl Player {
         let handle = Rectangle::new(color::WHITE);
         let transformation = context.transform.trans(self.position.0, self.position.1);
         handle.draw([0.0, 0.0, self.size.0, self.size.1], &context.draw_state, transformation, graphics);
+    }
+
+    /// Get the bounding box of the player's handle.
+    #[inline]
+    pub fn get_bounding_box(&self) -> [f64; 4] {
+        [
+            self.position.0,                // Left x.
+            self.position.1,                // Top y.
+            self.position.0 + self.size.0,  // Right x.
+            self.position.1 + self.size.1   // Bottom y.
+        ]
+    }
+
+    /// Move the player.
+    pub fn set_movement(&mut self, movement: Movement) {
+        self.movement = movement;
     }
 
     /// Update the player's position.
@@ -101,11 +117,6 @@ impl Player {
         }
     }
 
-    /// Move the player.
-    pub fn set_movement(&mut self, movement: Movement) {
-        self.movement = movement;
-    }
-
     /// Update the player's score with `additional_points`.
     ///
     /// If the new score would overflow (in either direction), the score is set to `isize::MAX` or `isize::MIN`,
@@ -124,17 +135,6 @@ impl Player {
             }
         }
     }
-
-    /// Get the bounding box of the player's handle.
-    #[inline]
-    pub fn get_bounding_box(&self) -> [f64; 4] {
-        [
-            self.position.0,                // Left x.
-            self.position.1,                // Top y.
-            self.position.0 + self.size.0,  // Right x.
-            self.position.1 + self.size.1   // Bottom y.
-        ]
-    }
 }
 
 #[cfg(test)]
@@ -152,6 +152,25 @@ mod tests {
         assert_eq!(player.score, 0);
         assert_eq!(player.size, (10.0, 60.0));
         assert_eq!(player.speed, 150.0);
+    }
+
+    #[test]
+    fn get_bounding_box() {
+        let player = Player::new((42.0, 13.37));
+        let bounding_box = player.get_bounding_box();
+        assert_eq!(bounding_box[0], 42.0);
+        assert_eq!(bounding_box[1], 13.37);
+        assert_eq!(bounding_box[2], 52.0);
+        assert_eq!(bounding_box[3], 73.37);
+    }
+
+    quickcheck! {
+        fn set_movement(movement: Movement) -> bool {
+        let mut player = Player::new((0.0, 0.0));
+        player.set_movement(movement);
+
+        player.movement == movement
+        }
     }
 
     quickcheck! {
@@ -194,15 +213,6 @@ mod tests {
     }
 
     quickcheck! {
-        fn set_movement(movement: Movement) -> bool {
-        let mut player = Player::new((0.0, 0.0));
-        player.set_movement(movement);
-
-        player.movement == movement
-        }
-    }
-
-    quickcheck! {
         fn update_score(old_score: isize, additional_points: isize) -> bool {
             let mut player = Player::new((0.0, 0.0));
             player.score = old_score;
@@ -221,15 +231,5 @@ mod tests {
                 return ::std::isize::MIN <= player.score && player.score < old_score;
             }
         }
-    }
-
-    #[test]
-    fn get_bounding_box() {
-        let player = Player::new((42.0, 13.37));
-        let bounding_box = player.get_bounding_box();
-        assert_eq!(bounding_box[0], 42.0);
-        assert_eq!(bounding_box[1], 13.37);
-        assert_eq!(bounding_box[2], 52.0);
-        assert_eq!(bounding_box[3], 73.37);
     }
 }

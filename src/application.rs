@@ -48,40 +48,40 @@ impl Application {
         })
     }
 
-    /// Render the entire game.
-    fn draw(&mut self, event: &Input) {
+    /// Handle button press events.
+    fn on_button_pressed(&mut self, button: Button) {
+        self.field.on_button_pressed(button);
+    }
+
+    /// Handle button release events.
+    fn on_button_released(&mut self, button: Button) {
+        self.field.on_button_released(button);
+    }
+
+    /// Render the entire application.
+    fn on_render(&mut self, event: &Input) {
         let field: &mut Field = &mut self.field;
 
         let _ = self.window.draw_2d(event, |context, gl_graphics| {
             clear(color::BLACK, gl_graphics);
 
-            field.draw(context.trans(0.0, 120.0), gl_graphics);
+            field.on_render(context.trans(0.0, 120.0), gl_graphics);
         });
     }
 
-    /// Update the game state.
-    fn update(&mut self, update_arguments: &UpdateArgs) {
-        self.field.update(update_arguments);
-    }
-
-    /// Handle button press events.
-    fn button_pressed(&mut self, button: Button) {
-        self.field.button_pressed(button);
-    }
-
-    /// Handle button release events.
-    fn button_released(&mut self, button: Button) {
-        self.field.button_released(button);
+    /// Update the application state.
+    fn on_update(&mut self, update_arguments: &UpdateArgs) {
+        self.field.on_update(update_arguments);
     }
 
     /// Run the game.
     pub fn run(&mut self) {
         while let Some(event) = self.window.next() {
             match event {
-                Input::Press(button) => self.button_pressed(button),
-                Input::Release(button) => self.button_released(button),
-                Input::Render(_) => self.draw(&event),
-                Input::Update(update_arguments) => self.update(&update_arguments),
+                Input::Press(button) => self.on_button_pressed(button),
+                Input::Release(button) => self.on_button_released(button),
+                Input::Render(_) => self.on_render(&event),
+                Input::Update(update_arguments) => self.on_update(&update_arguments),
                 _ => {},
             }
         }

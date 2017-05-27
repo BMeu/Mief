@@ -49,8 +49,32 @@ impl Field {
         }
     }
 
+    /// Handle button press events.
+    pub fn on_button_pressed(&mut self, button: Button) {
+        if let Button::Keyboard(key) = button {
+            match key {
+                Key::W => self.players[0].set_movement(Movement::Up),
+                Key::S => self.players[0].set_movement(Movement::Down),
+                Key::Up => self.players[1].set_movement(Movement::Up),
+                Key::Down => self.players[1].set_movement(Movement::Down),
+                _ => {},
+            }
+        }
+    }
+
+    /// Handle button release events.
+    pub fn on_button_released(&mut self, button: Button) {
+        if let Button::Keyboard(key) = button {
+            match key {
+                Key::W | Key::S => self.players[0].set_movement(Movement::None),
+                Key::Up | Key::Down => self.players[1].set_movement(Movement::None),
+                _ => {},
+            }
+        }
+    }
+
     /// Draw the field with its contents.
-    pub fn draw(&mut self, context: Context, graphics: &mut G2d) {
+    pub fn on_render(&mut self, context: Context, graphics: &mut G2d) {
         let line_width: f64 = 1.0;
 
         // Draw the center line.
@@ -79,7 +103,7 @@ impl Field {
     }
 
     /// Update the field state.
-    pub fn update(&mut self, update_arguments: &UpdateArgs) {
+    pub fn on_update(&mut self, update_arguments: &UpdateArgs) {
         let dt: f64 = update_arguments.dt;
 
         self.players[0].update(dt, self.height);
@@ -91,11 +115,11 @@ impl Field {
         ];
 
         let status: BallStatus = self.ball.update(dt, self.width, self.height, &player_handles);
-        self.handle_ball(status);
+        self.update_scores(status);
     }
 
     /// If the ball left the field on the left or right side, the other side's player will get a point.
-    fn handle_ball(&mut self, status: BallStatus) {
+    fn update_scores(&mut self, status: BallStatus) {
         match status {
             BallStatus::WithinGame => return,
             BallStatus::LeftOnLeftSide => {
@@ -108,29 +132,5 @@ impl Field {
 
         // The ball left the field. Create a new one.
         self.ball = Ball::new([self.width, self.height]);
-    }
-
-    /// Handle button press events.
-    pub fn button_pressed(&mut self, button: Button) {
-        if let Button::Keyboard(key) = button {
-            match key {
-                Key::W => self.players[0].set_movement(Movement::Up),
-                Key::S => self.players[0].set_movement(Movement::Down),
-                Key::Up => self.players[1].set_movement(Movement::Up),
-                Key::Down => self.players[1].set_movement(Movement::Down),
-                _ => {},
-            }
-        }
-    }
-
-    /// Handle button release events.
-    pub fn button_released(&mut self, button: Button) {
-        if let Button::Keyboard(key) = button {
-            match key {
-                Key::W | Key::S => self.players[0].set_movement(Movement::None),
-                Key::Up | Key::Down => self.players[1].set_movement(Movement::None),
-                _ => {},
-            }
-        }
     }
 }
