@@ -5,7 +5,7 @@
 [![Codecov](https://codecov.io/gh/BMeu/Mief/branch/master/graph/badge.svg)](https://codecov.io/gh/BMeu/Mief)
 [![License](https://img.shields.io/github/license/BMeu/Mief.svg)](README.md)
 
-Mief is a Pong clone written in Rust.
+_Mief_ is a _Pong_ clone written in [_Rust_](https://www.rust-lang.org/en-US/).
 
 **WORK IN PROGRESS**
 
