@@ -40,6 +40,5 @@ install:
   - cargo -vV
 build: false
 test_script:
-- cargo doc --no-deps
 - cargo test --all --verbose %cargoflags%
 - cargo test --all --verbose %cargoflags% --release
