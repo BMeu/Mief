@@ -37,14 +37,14 @@ start a completely new game, you will have to quit and restart _Mief_.
 
 ## Future
 
-[ ] Adjust field size when resizing the window
-[ ] Do not immediately start the game and new balls
-[ ] Customizable settings
-[ ] Add a main menu, in-game instructions, settings, ...
-[ ] Select game mode: endless, reach `x` points, difference of `x`, ...
-[ ] Add difficulties (e.g. speed of handles and ball, size of handles, multi-ball, freely move handles)
-[ ] Add a 4-player mode: square field, player on each side
-[ ] Add controller support
+- [ ] Adjust field size when resizing the window
+- [ ] Do not immediately start the game and new balls
+- [ ] Customizable settings
+- [ ] Add a main menu, in-game instructions, settings, ...
+- [ ] Select game mode: endless, reach `x` points, difference of `x`, ...
+- [ ] Add difficulties (e.g. speed of handles and ball, size of handles, multi-ball, freely move handles)
+- [ ] Add a 4-player mode: square field, player on each side
+- [ ] Add controller support
 
 ## License
 
