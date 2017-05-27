@@ -45,6 +45,7 @@ start a completely new game, you will have to quit and restart _Mief_.
 - [ ] Add difficulties (e.g. speed of handles and ball, size of handles, multi-ball, freely move handles)
 - [ ] Add a 4-player mode: square field, player on each side
 - [ ] Add controller support
+- [ ] Add computer players
 
 ## License
 
