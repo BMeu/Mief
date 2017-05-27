@@ -37,6 +37,7 @@ start a completely new game, you will have to quit and restart _Mief_.
 
 ## Future
 
+- [ ] Repeatedly increase ball and handle speeds
 - [ ] Adjust field size when resizing the window
 - [ ] Do not immediately start the game and new balls
 - [ ] Customizable settings
