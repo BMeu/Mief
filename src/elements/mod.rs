@@ -7,6 +7,7 @@
 //! This module contains all game elements such as the ball and the players.
 
 pub use self::ball::Ball;
+pub use self::ball::BallStatus;
 pub use self::field::Field;
 pub use self::player::Movement;
 pub use self::player::Player;

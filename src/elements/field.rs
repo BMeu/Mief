@@ -18,6 +18,7 @@ use color;
 use elements::Ball;
 use elements::Movement;
 use elements::Player;
+use elements::BallStatus;
 
 /// The playing field of the game.
 pub struct Field {
@@ -79,9 +80,34 @@ impl Field {
 
     /// Update the field state.
     pub fn update(&mut self, update_arguments: &UpdateArgs) {
-        self.players[0].update(update_arguments.dt, self.height);
-        self.players[1].update(update_arguments.dt, self.height);
-        self.ball.update(update_arguments.dt, self.width, self.height, self.players[0], self.players[1]);
+        let dt: f64 = update_arguments.dt;
+
+        self.players[0].update(dt, self.height);
+        self.players[1].update(dt, self.height);
+
+        let player_handles = [
+            self.players[0].get_bounding_box(),
+            self.players[1].get_bounding_box(),
+        ];
+
+        let status: BallStatus = self.ball.update(dt, self.width, self.height, &player_handles);
+        self.handle_ball(status);
+    }
+
+    /// If the ball left the field on the left or right side, the other side's player will get a point.
+    fn handle_ball(&mut self, status: BallStatus) {
+        match status {
+            BallStatus::WithinGame => return,
+            BallStatus::LeftOnLeftSide => {
+                self.players[1].update_score(1);
+            },
+            BallStatus::LeftOnRightSide => {
+                self.players[0].update_score(1);
+            }
+        }
+
+        // The ball left the field. Create a new one.
+        self.ball = Ball::new([self.width, self.height]);
     }
 
     /// Handle button press events.

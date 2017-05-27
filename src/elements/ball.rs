@@ -15,7 +15,20 @@ use rand::Rng;
 use rand::ThreadRng;
 
 use color;
-use elements::Player;
+
+/// The status of the ball.
+#[cfg_attr(feature = "cargo-clippy", allow(stutter))]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum BallStatus {
+    /// The ball left the field on the left side.
+    LeftOnLeftSide,
+
+    /// The ball left the field on the right side.
+    LeftOnRightSide,
+
+    /// The ball is still within the field.
+    WithinGame,
+}
 
 /// The ball used for playing.
 #[derive(Clone, Copy, Debug, Default)]
@@ -74,26 +87,24 @@ impl Ball {
 
     /// Update the ball's position. `dt` is the change in time since the last update, `width` and `height` are the
     /// window's size.
-    pub fn update(&mut self, dt: f64, width: u32, height: u32, left_player: Player, right_player: Player) {
+    pub fn update(&mut self, dt: f64, width: u32, height: u32, obstacles: &[[f64; 4]]) -> BallStatus {
         let progress_x = self.speed.0 * dt;
         let progress_y = self.speed.1 * dt;
         let next_position: (f64, f64) = (self.position.0 + progress_x, self.position.1 + progress_y);
 
-        // If the ball moves to the left, check for collisions with the player on the left side of the screen, otherwise
-        // check for collision with the player on the right side of the screen.
-        let player_handle: [f64; 4] = if self.speed.0 <= 0.0 {
-            left_player.get_bounding_box()
-        } else {
-            right_player.get_bounding_box()
-        };
-        self.check_collision(next_position, player_handle);
+        // Check for collisions with any obstacles.
+        for obstacle in obstacles {
+            self.check_collision(next_position, obstacle);
+        }
 
-        // TODO: If the ball leaves the screen on the left or right side, the other player will get a point.
-        // Will the ball leave the window on the x-axis? If so, revert speed on x-axis.
+        // Will the ball leave the window on the x-axis? If so, it is a point for the other side's player.
         let leaving_on_left_side: bool = self.position.0 + progress_x < 0.0;
+        if leaving_on_left_side {
+            return BallStatus::LeftOnLeftSide;
+        }
         let leaving_on_right_side: bool = self.position.0 + self.diameter + progress_x > width as f64;
-        if leaving_on_left_side || leaving_on_right_side {
-            self.speed.0 *= -1.0;
+        if leaving_on_right_side {
+            return BallStatus::LeftOnRightSide;
         }
 
         // Will the ball leave the window on the y-axis? If so, revert speed on y-axis.
@@ -107,22 +118,19 @@ impl Ball {
         self.position = (self.position.0 + self.speed.0 * dt,
                          self.position.1 + self.speed.1 * dt);
 
-        // Ensure the ball is entirely within the window.
-        if self.position.0 < 0.0 {
-            self.position.0 = 0.0;
-        } else if self.position.0 + self.diameter > width as f64 {
-            self.position.0 = (width as f64) - self.diameter;
-        }
+        // Ensure the ball is entirely within the window on the y-axis.
         if self.position.1 < 0.0 {
             self.position.1 = 0.0;
         } else if self.position.1 + self.diameter > height as f64 {
             self.position.1 = (height as f64) - self.diameter;
         }
+
+        BallStatus::WithinGame
     }
 
     /// Check if the ball will collide with the `other_object`'s bounding box at `next_position` and reverse the ball's
     /// direction accordingly.
-    fn check_collision(&mut self, next_position: (f64, f64), other_object: [f64; 4]) {
+    fn check_collision(&mut self, next_position: (f64, f64), other_object: &[f64; 4]) {
         let radius: f64 = self.diameter / 2.0;
         let (x, y): (f64, f64) = next_position;
 
@@ -130,22 +138,21 @@ impl Ball {
         let (left_x, top_y, right_x, bottom_y) = (other_object[0], other_object[1], other_object[2], other_object[3]);
 
         // Did the ball hit the object from the top or bottom?
-        let hit_upper_or_lower_edge: bool =
-            x + radius >= left_x &&                       // The ball must be within the other object's width.
+        let hit_horizontal_edge: bool =
+            x + radius >= left_x &&         // The ball must be within the other object's width.
             x + radius <= right_x &&
-            y + self.diameter >= top_y &&                 // The ball must not be above the object.
-            y <= bottom_y;                                // The ball must not be below the object.
+            y + self.diameter >= top_y &&   // The ball must not be above the object.
+            y <= bottom_y;                  // The ball must not be below the object.
+        if hit_horizontal_edge {
+            self.speed.1 *= -1.0;
+        }
 
         // Did the ball hit the object on the left or right side?
         let hit_lateral_edge: bool =
-            y + radius >= top_y &&                        // The ball must be within the other object's height.
+            y + radius >= top_y &&          // The ball must be within the other object's height.
             y + radius <= bottom_y &&
-            x + self.diameter >= left_x &&                // Is the ball's right edge behind the object's left edge?
-            x <= right_x;                                 // The ball must not be to the right of the object.
-
-        if hit_upper_or_lower_edge {
-            self.speed.1 *= -1.0;
-        }
+            x + self.diameter >= left_x &&  // The ball must not be to the left of the object.
+            x <= right_x;                   // The ball must not be to the right of the object.
         if hit_lateral_edge {
             self.speed.0 *= -1.0;
         }
@@ -156,28 +163,29 @@ impl Ball {
 mod tests {
     #![allow(trivial_casts)]
 
+    use quickcheck::TestResult;
     use super::*;
 
     /// Two `f64` numbers are equal iff their difference is within `std::f64::EPSILON`.
-    fn eq_epsilon(first: f64, second: f64) -> bool {
+    fn approx_eq(first: f64, second: f64) -> bool {
         first - second <= ::std::f64::EPSILON
     }
 
     quickcheck! {
-        fn new(width: u32, height: u32) -> bool {
+        fn new(width: u32, height: u32) -> TestResult {
             let ball = Ball::new([width, height]);
             assert_eq!(ball.diameter, 10.0);
 
             // The window has a minimum size.
             if (width as f64) < ball.diameter || (height as f64) < ball.diameter {
-                return true;
+                return TestResult::discard();
             }
 
             // The margins of the ball must be the same on each axis.
-            let left_equals_right_margin: bool = eq_epsilon(ball.position.0,
-                                                            (width as f64) - ball.position.0 + ball.diameter);
-            let top_equals_bottom_margin: bool = eq_epsilon(ball.position.1,
-                                                            (height as f64) - ball.position.1 + ball.diameter);
+            let left_equals_right_margin: bool = approx_eq(ball.position.0,
+                                                           (width as f64) - ball.position.0 + ball.diameter);
+            let top_equals_bottom_margin: bool = approx_eq(ball.position.1,
+                                                           (height as f64) - ball.position.1 + ball.diameter);
 
             // The (absolute) speed in either direction should be between 100 and 150.
             let speed_x: f64 = ball.speed.0.abs();
@@ -185,32 +193,88 @@ mod tests {
             let is_valid_speed_x: bool = 100.0 <= speed_x && speed_x <= 150.0;
             let is_valid_speed_y: bool = 100.0 <= speed_y && speed_y <= 150.0;
 
-            left_equals_right_margin &&
+            TestResult::from_bool(
+                left_equals_right_margin &&
                 top_equals_bottom_margin &&
                 is_valid_speed_x &&
                 is_valid_speed_y
+            )
         }
     }
 
     quickcheck! {
-        fn update(dt: f64, width: u32, height: u32) -> bool {
+        fn update(dt: f64, width: u32, height: u32) -> TestResult {
             let mut ball = Ball::new([width, height]);
-            ball.update(dt, width, height);
 
             // The window has a minimum size.
-            if (width as f64) < ball.diameter || (height as f64) < ball.diameter {
-                return true;
+            if (width as f64) < ball.diameter || (height as f64) < ball.diameter || dt.is_sign_negative() {
+                return TestResult::discard();
             }
 
-            let not_leaving_on_left_side: bool = ball.position.0 >= 0.0;
-            let not_leaving_on_right_side: bool = ball.position.0 + ball.diameter <= width as f64;
+            let status: BallStatus = ball.update(dt, width, height, &[]);
+
+            let leaving_on_left_side: bool = ball.position.0 + ball.speed.0 * dt <= 0.0;
+            let leaving_on_right_side: bool = ball.position.0 + ball.diameter  + ball.speed.0 * dt >= width as f64;
+            if leaving_on_left_side {
+                return TestResult::from_bool(status == BallStatus::LeftOnLeftSide);
+            }
+            if leaving_on_right_side {
+                return TestResult::from_bool(status == BallStatus::LeftOnRightSide);
+            }
+
             let not_leaving_on_top: bool = ball.position.1 >= 0.0;
             let not_leaving_on_bottom: bool = ball.position.1 + ball.diameter <= height as f64;
-
-            not_leaving_on_left_side &&
-                not_leaving_on_right_side &&
-                not_leaving_on_top &&
-                not_leaving_on_bottom
+            TestResult::from_bool(not_leaving_on_top && not_leaving_on_bottom)
         }
+    }
+
+    #[test]
+    fn check_collision_no_collision() {
+        let mut ball = Ball::new([100, 100]);
+        let old_speed: (f64, f64) = ball.speed;
+        let object: [f64; 4] = [75.0, 75.0, 85.0, 85.0];
+
+        ball.check_collision((25.0, 25.0), &object);
+        assert_eq!(ball.speed, old_speed);
+    }
+
+    #[test]
+    fn check_collision_on_top() {
+        let mut ball = Ball::new([100, 100]);
+        let old_speed: (f64, f64) = ball.speed;
+        let object: [f64; 4] = [75.0, 75.0, 85.0, 85.0];
+
+        ball.check_collision((80.0, 65.0), &object);
+        assert_eq!(ball.speed, (old_speed.0, old_speed.1 * -1.0));
+    }
+
+    #[test]
+    fn check_collision_on_right() {
+        let mut ball = Ball::new([100, 100]);
+        let old_speed: (f64, f64) = ball.speed;
+        let object: [f64; 4] = [75.0, 75.0, 85.0, 85.0];
+
+        ball.check_collision((85.0, 80.0), &object);
+        assert_eq!(ball.speed, (old_speed.0 * -1.0, old_speed.1));
+    }
+
+    #[test]
+    fn check_collision_on_bottom() {
+        let mut ball = Ball::new([100, 100]);
+        let old_speed: (f64, f64) = ball.speed;
+        let object: [f64; 4] = [75.0, 75.0, 85.0, 85.0];
+
+        ball.check_collision((80.0, 85.0), &object);
+        assert_eq!(ball.speed, (old_speed.0, old_speed.1 * -1.0));
+    }
+
+    #[test]
+    fn check_collision_on_left() {
+        let mut ball = Ball::new([100, 100]);
+        let old_speed: (f64, f64) = ball.speed;
+        let object: [f64; 4] = [75.0, 75.0, 85.0, 85.0];
+
+        ball.check_collision((65.0, 80.0), &object);
+        assert_eq!(ball.speed, (old_speed.0 * -1.0, old_speed.1));
     }
 }
