@@ -243,6 +243,32 @@ mod tests {
     }
 
     #[test]
+    fn update_reposition_to_top() {
+        let (width, height): (u32, u32) = (100, 100);
+        let mut ball = Ball::new([width, height]);
+        ball.speed = (100.0, -100.0);
+        ball.position = (45.0, -15.0);
+
+        let status = ball.update(0.1, width, height, &[]);
+        assert_eq!(status, BallStatus::WithinGame);
+        assert_eq!(ball.speed, (100.0, 100.0));
+        assert_eq!(ball.position, (55.0, 0.0));
+    }
+
+    #[test]
+    fn update_reposition_to_bottom() {
+        let (width, height): (u32, u32) = (100, 100);
+        let mut ball = Ball::new([width, height]);
+        ball.speed = (100.0, 100.0);
+        ball.position = (45.0, 110.0);
+
+        let status = ball.update(0.1, width, height, &[]);
+        assert_eq!(status, BallStatus::WithinGame);
+        assert_eq!(ball.speed, (100.0, -100.0));
+        assert_eq!(ball.position, (55.0, 90.0));
+    }
+
+    #[test]
     fn update_leave_on_left() {
         let (width, height): (u32, u32) = (100, 100);
         let mut ball = Ball::new([width, height]);
