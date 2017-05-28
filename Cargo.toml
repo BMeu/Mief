@@ -10,6 +10,10 @@ license = "MIT/Apache-2.0"
 keywords = ["pong", "clone"]
 categories = ["games"]
 
+[badges]
+appveyor = { repository = "BMeu/mief" }
+travis-ci = { repository = "BMeu/Mief" }
+
 [[bin]]
 name = "mief"
 
