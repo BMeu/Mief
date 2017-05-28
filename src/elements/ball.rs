@@ -78,6 +78,25 @@ impl Ball {
         }
     }
 
+    /// Change the ball's speed by the given `amount` in both directions.
+    pub fn change_speed(&mut self, amount: f64) {
+        // Change the speed in the x-direction.
+        if self.speed.0.is_sign_positive() {
+            self.speed.0 += amount;
+        }
+        else {
+            self.speed.0 -= amount;
+        }
+
+        // Change the speed in the y-direction.
+        if self.speed.1.is_sign_positive() {
+            self.speed.1 += amount;
+        }
+        else {
+            self.speed.1 -= amount;
+        }
+    }
+
     /// Draw the ball.
     pub fn draw(&self, context: &Context, graphics: &mut G2d) {
         let ball = Ellipse::new(color::WHITE).resolution(100);
@@ -200,6 +219,26 @@ mod tests {
                 is_valid_speed_y
             )
         }
+    }
+
+    #[test]
+    fn change_speed_positive() {
+        let speed: (f64, f64) = (100.0, 100.0);
+        let mut ball = Ball::new([100, 100]);
+        ball.speed = speed;
+
+        ball.change_speed(10.0);
+        assert_eq!(ball.speed, (110.0, 110.0));
+    }
+
+    #[test]
+    fn change_speed_negative() {
+        let speed: (f64, f64) = (-100.0, -100.0);
+        let mut ball = Ball::new([100, 100]);
+        ball.speed = speed;
+
+        ball.change_speed(10.0);
+        assert_eq!(ball.speed, (-110.0, -110.0));
     }
 
     #[test]

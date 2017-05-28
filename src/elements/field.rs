@@ -21,10 +21,19 @@ use elements::FieldSide;
 use elements::Movement;
 use elements::Player;
 
+/// The interval at which the ball's and the players' speeds are changed.
+const SPEED_CHANGE_INTERVAL: f64 = 10.0;
+
+/// The amount by which the speeds of the ball and players are changed.
+const SPEED_CHANGE: f64 = 10.0;
+
 /// The field where the game actually occurs.
 pub struct Field {
     /// The ball used for playing.
     ball: Ball,
+
+    /// The Δt since the last speed change.
+    last_speed_change: f64,
 
     /// The players.
     players: [Player; 2],
@@ -41,6 +50,7 @@ impl Field {
     pub fn new(size: [u32; 2]) -> Field {
         Field {
             ball: Ball::new(size),
+            last_speed_change: 0.0,
             players: [
                 Player::new(FieldSide::Left, size[0]),
                 Player::new(FieldSide::Right, size[0])
@@ -123,6 +133,17 @@ impl Field {
     pub fn on_update(&mut self, update_arguments: &UpdateArgs) {
         let dt: f64 = update_arguments.dt;
 
+        // Update the speeds if necessary.
+        self.last_speed_change += dt;
+        if self.last_speed_change >= SPEED_CHANGE_INTERVAL {
+            self.last_speed_change = 0.0;
+
+            self.ball.change_speed(SPEED_CHANGE);
+            for player in &mut self.players {
+                player.change_speed(SPEED_CHANGE);
+            }
+        }
+
         self.players[0].update(dt, self.height);
         self.players[1].update(dt, self.height);
 
@@ -159,6 +180,7 @@ mod tests {
     #[test]
     fn new() {
         let field = Field::new([200, 100]);
+        assert!(field.last_speed_change <= 0.0);  // The first speed change might take longer to happen.
         assert_eq!(field.width, 200);
         assert_eq!(field.height, 100);
     }

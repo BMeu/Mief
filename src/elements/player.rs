@@ -20,6 +20,9 @@ use color;
 /// The margin between the player's handle and the respective edge of the field.
 const PLAYER_MARGIN: f64 = 10.0;
 
+/// The player's initial speed.
+const SPEED: f64 = 150.0;
+
 /// The direction of the player's movement.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Movement {
@@ -101,8 +104,13 @@ impl Player {
             position: (x, y),
             score: 0,
             size: (10.0, 60.0),
-            speed: 150.0,
+            speed: SPEED,
         }
+    }
+
+    /// Change the player's speed by the given `amount`.
+    pub fn change_speed(&mut self, amount: f64) {
+        self.speed += amount;
     }
 
     /// Draw the player.
@@ -169,6 +177,9 @@ impl Player {
                 }
             }
         }
+
+        // Reset the speed.
+        self.speed = SPEED;
     }
 
     /// Update the player's position depending on the new width of the field.
@@ -206,6 +217,14 @@ mod tests {
         assert_eq!(player.score, 0);
         assert_eq!(player.size, (10.0, 60.0));
         assert_eq!(player.speed, 150.0);
+    }
+
+    #[test]
+    fn change_speed() {
+        let mut player = Player::new(FieldSide::Left, 42);
+        player.speed = 42.0;
+        player.change_speed(10.0);
+        assert_eq!(player.speed, 52.0);
     }
 
     #[test]
@@ -276,22 +295,26 @@ mod tests {
     }
 
     quickcheck! {
-        fn update_score(old_score: isize, additional_points: isize) -> bool {
+        fn update_score(old_score: isize, additional_points: isize, speed: f64) -> bool {
             let mut player = Player::new(FieldSide::Left, 42);
+            player.speed = speed;
             player.score = old_score;
             player.update_score(additional_points);
 
             if additional_points == 0 {
                 // If the additional points are 0, the score must not change.
-                return player.score == old_score;
+                return player.score == old_score &&
+                    player.speed == SPEED;
             } else if additional_points > 0 {
                 // If the additional points are positive, the new score must be greater than the old score, but must not
                 // overflow.
-                return old_score < player.score && player.score <= ::std::isize::MAX;
+                return old_score < player.score && player.score <= ::std::isize::MAX &&
+                    player.speed == SPEED;
             } else {
                 // If the additional points are negative, the new score must be smaller than the old score, but must not
                 // overflow.
-                return ::std::isize::MIN <= player.score && player.score < old_score;
+                return ::std::isize::MIN <= player.score && player.score < old_score &&
+                    player.speed == SPEED;
             }
         }
     }
