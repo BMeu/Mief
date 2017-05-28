@@ -64,9 +64,10 @@ impl Application {
         let title: &str = "Mief";
 
         let window: PistonWindow = WindowSettings::new(title, [width, height])
-            .opengl(OPENGL)
             .exit_on_esc(true)
+            .opengl(OPENGL)
             .resizable(false)  // Not yet working - see https://github.com/PistonDevelopers/piston_window/issues/160.
+            .vsync(true)
             .build()?;
 
         let assets: PathBuf = Search::ParentsThenKids(3, 1).for_folder("assets")?;
