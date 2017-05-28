@@ -42,4 +42,4 @@ install:
 build: false
 test_script:
 - cargo test --all
-- cargo test --all --relesae
+- cargo test --all --release
