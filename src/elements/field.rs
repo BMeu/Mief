@@ -82,7 +82,7 @@ impl Field {
     }
 
     /// Draw the field with its contents.
-    pub fn on_render(&mut self, context: Context, graphics: &mut G2d) {
+    pub fn on_render(&self, context: Context, graphics: &mut G2d) {
         let line_width: f64 = 1.0;
 
         // Draw the center line.

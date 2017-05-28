@@ -80,7 +80,7 @@ impl Application {
         let mut font = Glyphs::new(font, factory).unwrap();
         let font_size: u32 = 60;
 
-        let field: &mut Field = &mut self.field;
+        let field: &Field = &self.field;
 
         let _ = self.window.draw_2d(event, |context, gl_graphics| {
             clear(color::BLACK, gl_graphics);
