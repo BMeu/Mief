@@ -56,7 +56,7 @@ after_success: |
   echo "Uploaded code coverage";
   if [[ "$TRAVIS_RUST_VERSION" == "stable" ]]; then
   cargo rustdoc --all-features -- --no-defaults --passes collapse-docs --passes unindent-comments \
-  && echo '<meta http-equiv=refresh content=0;url=${PROJECT_NAME}/index.html>' > target/doc/index.html && \
+  && echo "<meta http-equiv=refresh content=0;url=${PROJECT_NAME}/index.html>" > target/doc/index.html && \
   sudo pip install ghp-import && \
   ghp-import -n target/doc && \
   git push -qf https://${TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages;
