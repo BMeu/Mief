@@ -42,5 +42,7 @@ install:
   - cargo --version
 build: false
 test_script:
-- cargo test --all
-- cargo test --all --release
+  - cargo check --all
+  - cargo check --all --features display-fps
+  - cargo test --all
+  - cargo test --all --release

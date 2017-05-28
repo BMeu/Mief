@@ -24,6 +24,8 @@
                                            wrong_pub_self_convention))]
 
 extern crate find_folder;
+#[cfg(feature = "display-fps")]
+extern crate fps_counter;
 extern crate piston_window;
 #[cfg(test)]
 #[macro_use]

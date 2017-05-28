@@ -35,6 +35,8 @@ script:
       cargo clippy -- -D warnings;
     fi'
   - cargo doc --no-deps
+  - cargo check --all
+  - cargo check --all --features display-fps
   - cargo test --all
   - cargo test --all --release
 after_success: |

@@ -16,6 +16,9 @@ _Mief_ is a [_Pong_](https://en.wikipedia.org/wiki/Pong) clone written in [_Rust
    2. Download _Mief_: `git clone https://github.com/BMeu/Mief.git; cd Mief`
 2. Run _Mief_: `cargo run --release`
 
+If you want to display the current frames per second (FPS), instead (compile and) run _Mief_ with the `display-fps`
+feature: `cargo run --release --features display-fps`.
+
 ## Instructions
 
 The goal is pretty simple: prevent the ball from leaving the field on your side. Each player controls a handle

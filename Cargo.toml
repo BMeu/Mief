@@ -14,11 +14,15 @@ categories = ["games"]
 appveyor = { repository = "BMeu/mief" }
 travis-ci = { repository = "BMeu/Mief" }
 
+[features]
+display-fps = ["fps_counter"]
+
 [[bin]]
 name = "mief"
 
 [dependencies]
 find_folder = "0.3"
+fps_counter = { version = "0.2", optional = true }
 piston_window = "0.65"
 rand = "0.3"
 

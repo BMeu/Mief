@@ -9,6 +9,8 @@
 use std::path::PathBuf;
 
 use find_folder::Search;
+#[cfg(feature = "display-fps")]
+use fps_counter::FPSCounter;
 use piston_window::clear;
 use piston_window::Button;
 use piston_window::Glyphs;
@@ -19,6 +21,8 @@ use piston_window::RenderArgs;
 use piston_window::Transformed;
 use piston_window::UpdateArgs;
 use piston_window::WindowSettings;
+#[cfg(feature = "display-fps")]
+use piston_window::text::Text;
 
 use elements::Field;
 use elements::Scoreboard;
@@ -44,6 +48,10 @@ pub struct Application {
 
     /// The scoreboard.
     scoreboard: Scoreboard,
+
+    /// The FPS counter.
+    #[cfg(feature = "display-fps")]
+    fps_counter: FPSCounter,
 }
 
 impl Application {
@@ -63,12 +71,28 @@ impl Application {
 
         let assets: PathBuf = Search::ParentsThenKids(3, 1).for_folder("assets")?;
 
-        Ok(Application {
-            assets: assets,
-            window: window,
-            field: Field::new([width, height - SCOREBOARD_HEIGHT]),
-            scoreboard: Scoreboard::new([width, SCOREBOARD_HEIGHT], title)
-        })
+        let application = match () {
+            #[cfg(feature = "display-fps")]
+            () => {
+                Application {
+                    assets: assets,
+                    window: window,
+                    field: Field::new([width, height - SCOREBOARD_HEIGHT]),
+                    scoreboard: Scoreboard::new([width, SCOREBOARD_HEIGHT], title),
+                    fps_counter: FPSCounter::new(),
+                }
+            },
+            #[cfg(not(feature = "display-fps"))]
+            () => {
+                Application {
+                    assets: assets,
+                    window: window,
+                    field: Field::new([width, height - SCOREBOARD_HEIGHT]),
+                    scoreboard: Scoreboard::new([width, SCOREBOARD_HEIGHT], title),
+                }
+            },
+        };
+        Ok(application)
     }
 
     /// Handle button press events.
@@ -89,12 +113,23 @@ impl Application {
 
         let field: &Field = &self.field;
         let scoreboard: &Scoreboard = &self.scoreboard;
+        #[cfg(feature = "display-fps")]
+        let fps: &str = &self.fps_counter.tick().to_string();
 
         let _ = self.window.draw_2d(event, |context, gl_graphics| {
             clear(color::BLACK, gl_graphics);
 
             field.on_render(context.trans(0.0, SCOREBOARD_HEIGHT as f64), gl_graphics);
             scoreboard.on_render(&mut font, context.trans(0.0, 0.0), gl_graphics);
+
+            #[cfg(feature = "display-fps")]
+            {
+                let size: u32 = 25;
+                let margin: f64 = 10.0;
+                let transformation = context.transform.trans(margin, (size as f64) + margin);
+                let text_object = Text::new_color(color::GREEN, size);
+                text_object.draw(fps, &mut font, &context.draw_state, transformation, gl_graphics);
+            }
         });
     }
 
