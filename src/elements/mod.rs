@@ -9,9 +9,11 @@
 mod ball;
 mod field;
 mod player;
+mod scoreboard;
 
 pub use self::ball::Ball;
 pub use self::ball::BallStatus;
 pub use self::field::Field;
 pub use self::player::Movement;
 pub use self::player::Player;
+pub use self::scoreboard::Scoreboard;

@@ -19,10 +19,9 @@ use piston_window::RenderArgs;
 use piston_window::Transformed;
 use piston_window::UpdateArgs;
 use piston_window::WindowSettings;
-use piston_window::character::CharacterCache;
-use piston_window::text::Text;
 
 use elements::Field;
+use elements::Scoreboard;
 use execution_flow::Result;
 use color;
 
@@ -39,6 +38,9 @@ pub struct Application {
 
     /// The playing field.
     field: Field,
+
+    /// The scoreboard.
+    scoreboard: Scoreboard,
 }
 
 impl Application {
@@ -47,8 +49,9 @@ impl Application {
     /// Returns an error if the `PistonWindow` cannot be initialized.
     pub fn new() -> Result<Application> {
         let window_size: [u32; 2] = [800, 600];
+        let title: &str = "Mief";
 
-        let window: PistonWindow = WindowSettings::new("Mief", window_size)
+        let window: PistonWindow = WindowSettings::new(title, window_size)
             .opengl(OPENGL)
             .exit_on_esc(true)
             .resizable(false)  // Not yet working - see https://github.com/PistonDevelopers/piston_window/issues/160.
@@ -60,6 +63,7 @@ impl Application {
             assets: assets,
             window: window,
             field: Field::new([800, 480]),
+            scoreboard: Scoreboard::new([800, 120], title)
         })
     }
 
@@ -74,47 +78,26 @@ impl Application {
     }
 
     /// Render the entire application.
-    fn on_render(&mut self, event: &Input, render_arguments: &RenderArgs) {
+    fn on_render(&mut self, event: &Input, _render_arguments: &RenderArgs) {
         let font: PathBuf = self.assets.join("Anonymous Pro.ttf");
         let factory = self.window.factory.clone();
         let mut font = Glyphs::new(font, factory).unwrap();
-        let font_size: u32 = 60;
 
         let field: &Field = &self.field;
+        let scoreboard: &Scoreboard = &self.scoreboard;
 
         let _ = self.window.draw_2d(event, |context, gl_graphics| {
             clear(color::BLACK, gl_graphics);
 
             field.on_render(context.trans(0.0, 120.0), gl_graphics);
-
-            // Draw the title.
-            let title_text: &str = "Mief";
-            let title_width: f64 = font.width(font_size, title_text);
-            let title = Text::new_color(color::WHITE, font_size);
-            let transformation = context.transform.trans(((render_arguments.width as f64) - title_width) / 2.0, 90.0);
-            title.draw("Mief", &mut font, &context.draw_state, transformation, gl_graphics);
-
-            // Get the scores.
-            let scores: [isize; 2] = field.get_player_scores();
-            let left_score: &str = &scores[0].to_string();
-            let right_score: &str = &scores[1].to_string();
-
-            // Draw the left player's score.
-            let score = Text::new_color(color::WHITE, font_size);
-            let transformation = context.transform.trans(10.0, 90.0);
-            score.draw(left_score, &mut font, &context.draw_state, transformation, gl_graphics);
-
-            // Draw the right player's score.
-            let right_score_width: f64 = font.width(font_size, right_score);
-            let score = Text::new_color(color::WHITE, font_size);
-            let transformation = context.transform.trans((render_arguments.width as f64) - right_score_width - 10.0, 90.0);
-            score.draw(right_score, &mut font, &context.draw_state, transformation, gl_graphics);
+            scoreboard.on_render(&mut font, context.trans(0.0, 0.0), gl_graphics);
         });
     }
 
     /// Update the application state.
     fn on_update(&mut self, update_arguments: &UpdateArgs) {
         self.field.on_update(update_arguments);
+        self.scoreboard.on_update(self.field.get_player_scores());
     }
 
     /// Run the application.
