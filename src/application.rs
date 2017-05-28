@@ -28,6 +28,9 @@ use color;
 /// The OpenGL version.
 const OPENGL: OpenGL = OpenGL::V3_2;
 
+/// The (currently) fixed height of the scoreboard.
+const SCOREBOARD_HEIGHT: u32 = 120;
+
 /// The manager of the application logic.
 pub struct Application {
     /// Path to the folder containing the assets.
@@ -48,10 +51,11 @@ impl Application {
     ///
     /// Returns an error if the `PistonWindow` cannot be initialized.
     pub fn new() -> Result<Application> {
-        let window_size: [u32; 2] = [800, 600];
+        let width: u32 = 800;
+        let height: u32 = 600;
         let title: &str = "Mief";
 
-        let window: PistonWindow = WindowSettings::new(title, window_size)
+        let window: PistonWindow = WindowSettings::new(title, [width, height])
             .opengl(OPENGL)
             .exit_on_esc(true)
             .resizable(false)  // Not yet working - see https://github.com/PistonDevelopers/piston_window/issues/160.
@@ -62,8 +66,8 @@ impl Application {
         Ok(Application {
             assets: assets,
             window: window,
-            field: Field::new([800, 480]),
-            scoreboard: Scoreboard::new([800, 120], title)
+            field: Field::new([width, height - SCOREBOARD_HEIGHT]),
+            scoreboard: Scoreboard::new([width, SCOREBOARD_HEIGHT], title)
         })
     }
 
@@ -89,9 +93,15 @@ impl Application {
         let _ = self.window.draw_2d(event, |context, gl_graphics| {
             clear(color::BLACK, gl_graphics);
 
-            field.on_render(context.trans(0.0, 120.0), gl_graphics);
+            field.on_render(context.trans(0.0, SCOREBOARD_HEIGHT as f64), gl_graphics);
             scoreboard.on_render(&mut font, context.trans(0.0, 0.0), gl_graphics);
         });
+    }
+
+    /// Resize the application.
+    fn on_resize(&mut self, new_width: u32, new_height: u32) {
+        self.field.on_resize(new_width, new_height - SCOREBOARD_HEIGHT);
+        self.scoreboard.on_resize(new_width, SCOREBOARD_HEIGHT);
     }
 
     /// Update the application state.
@@ -107,6 +117,7 @@ impl Application {
                 Input::Press(button) => self.on_button_pressed(button),
                 Input::Release(button) => self.on_button_released(button),
                 Input::Render(render_arguments) => self.on_render(&event, &render_arguments),
+                Input::Resize(width, height) => self.on_resize(width, height),
                 Input::Update(update_arguments) => self.on_update(&update_arguments),
                 _ => {},
             }

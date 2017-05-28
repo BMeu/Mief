@@ -104,6 +104,12 @@ impl Scoreboard {
         self.draw_text(score, TextAlignment::Right, right_margin, font, &context, graphics);
     }
 
+    /// Resize the scoreboard.
+    pub fn on_resize(&mut self, new_width: u32, new_height: u32) {
+        self.width = new_width;
+        self.height = new_height;
+    }
+
     /// Update the scoreboard.
     pub fn on_update(&mut self, scores: [isize; 2]) {
         self.scores = scores;
@@ -157,6 +163,14 @@ mod tests {
                 font_size * 2 + 1 == height
             }
         }
+    }
+
+    #[test]
+    fn on_resize() {
+        let mut scoreboard = Scoreboard::new([200, 100], "Mief");
+        scoreboard.on_resize(100, 200);
+        assert_eq!(scoreboard.width, 100);
+        assert_eq!(scoreboard.height, 200);
     }
 
     #[test]

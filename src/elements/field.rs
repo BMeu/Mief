@@ -17,6 +17,7 @@ use piston_window::UpdateArgs;
 use color;
 use elements::Ball;
 use elements::BallStatus;
+use elements::FieldSide;
 use elements::Movement;
 use elements::Player;
 
@@ -41,8 +42,8 @@ impl Field {
         Field {
             ball: Ball::new(size),
             players: [
-                Player::new((10.0, 0.0)),
-                Player::new(((size[0] as f64) - 20.0, 0.0))
+                Player::new(FieldSide::Left, size[0]),
+                Player::new(FieldSide::Right, size[0])
             ],
             height: size[1],
             width: size[0],
@@ -110,6 +111,14 @@ impl Field {
         self.ball.draw(&context, graphics);
     }
 
+    /// Resize the field.
+    pub fn on_resize(&mut self, new_width: u32, new_height: u32) {
+        self.width = new_width;
+        self.height = new_height;
+        self.players[0].update_position(new_width);
+        self.players[1].update_position(new_width);
+    }
+
     /// Update the field state.
     pub fn on_update(&mut self, update_arguments: &UpdateArgs) {
         let dt: f64 = update_arguments.dt;
@@ -161,5 +170,13 @@ mod tests {
         field.players[1].update_score(-42);
         let scores: [isize; 2] = field.get_player_scores();
         assert_eq!(scores, [42, -42]);
+    }
+
+    #[test]
+    fn on_resize() {
+        let mut field = Field::new([200, 100]);
+        field.on_resize(100, 200);
+        assert_eq!(field.width, 100);
+        assert_eq!(field.height, 200);
     }
 }

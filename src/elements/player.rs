@@ -17,6 +17,9 @@ use quickcheck::Gen;
 
 use color;
 
+/// The margin between the player's handle and the respective edge of the field.
+const PLAYER_MARGIN: f64 = 10.0;
+
 /// The direction of the player's movement.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Movement {
@@ -43,9 +46,32 @@ impl Arbitrary for Movement {
     }
 }
 
+/// The player's position on the field.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum FieldSide {
+    /// The player plays on the left side of the field.
+    Left,
+
+    /// The player plays on the right side of the field.
+    Right,
+}
+
+impl FieldSide {
+    /// Get the x position on the field, depending on the field size.
+    pub fn get_x_position(&self, player_width: f64, field_width: u32) -> f64 {
+        match *self {
+            FieldSide::Left => PLAYER_MARGIN,
+            FieldSide::Right => (field_width as f64) - player_width - PLAYER_MARGIN,
+        }
+    }
+}
+
 /// The player.
 #[derive(Clone, Copy, Debug)]
 pub struct Player {
+    /// The player's position on the field.
+    field_side: FieldSide,
+
     /// The current direction of movement.
     movement: Movement,
 
@@ -64,10 +90,15 @@ pub struct Player {
 
 impl Player {
     /// Create a new player at position `(x, y)`.
-    pub fn new(position: (f64, f64)) -> Player {
+    pub fn new(side: FieldSide, field_width: u32) -> Player {
+        let size: (f64, f64) = (10.0, 60.0);
+        let y: f64 = 0.0;
+        let x: f64 = side.get_x_position(size.0, field_width);
+
         Player {
+            field_side: side,
             movement: Movement::None,
-            position: position,
+            position: (x, y),
             score: 0,
             size: (10.0, 60.0),
             speed: 150.0,
@@ -139,6 +170,11 @@ impl Player {
             }
         }
     }
+
+    /// Update the player's position depending on the new width of the field.
+    pub fn update_position(&mut self, new_field_width: u32) {
+        self.position.0 = self.field_side.get_x_position(self.size.0, new_field_width);
+    }
 }
 
 #[cfg(test)]
@@ -149,10 +185,24 @@ mod tests {
     use super::*;
 
     #[test]
+    fn get_x_position_left() {
+        let side = FieldSide::Left;
+        let x: f64 = side.get_x_position(20.0, 50);
+        assert_eq!(x, PLAYER_MARGIN);
+    }
+
+    #[test]
+    fn get_x_position_right() {
+        let side = FieldSide::Right;
+        let x: f64 = side.get_x_position(20.0, 50);
+        assert_eq!(x, 30.0 - PLAYER_MARGIN);
+    }
+
+    #[test]
     fn new() {
-        let player = Player::new((42.0, 13.37));
+        let player = Player::new(FieldSide::Left, 42);
         assert_eq!(player.movement, Movement::None);
-        assert_eq!(player.position, (42.0, 13.37));
+        assert_eq!(player.position, (PLAYER_MARGIN, 0.0));
         assert_eq!(player.score, 0);
         assert_eq!(player.size, (10.0, 60.0));
         assert_eq!(player.speed, 150.0);
@@ -160,17 +210,17 @@ mod tests {
 
     #[test]
     fn get_bounding_box() {
-        let player = Player::new((42.0, 13.37));
+        let player = Player::new(FieldSide::Left, 42);
         let bounding_box = player.get_bounding_box();
-        assert_eq!(bounding_box[0], 42.0);
-        assert_eq!(bounding_box[1], 13.37);
-        assert_eq!(bounding_box[2], 52.0);
-        assert_eq!(bounding_box[3], 73.37);
+        assert_eq!(bounding_box[0], PLAYER_MARGIN);
+        assert_eq!(bounding_box[1], 0.0);
+        assert_eq!(bounding_box[2], PLAYER_MARGIN + 10.0);
+        assert_eq!(bounding_box[3], 60.0);
     }
 
     #[test]
     fn get_score() {
-        let mut player = Player::new((42.0, 13.37));
+        let mut player = Player::new(FieldSide::Left, 42);
         let score: isize = 42;
         player.score = score;
         assert_eq!(player.get_score(), score);
@@ -178,7 +228,7 @@ mod tests {
 
     quickcheck! {
         fn set_movement(movement: Movement) -> bool {
-        let mut player = Player::new((0.0, 0.0));
+        let mut player = Player::new(FieldSide::Left, 42);
         player.set_movement(movement);
 
         player.movement == movement
@@ -192,7 +242,8 @@ mod tests {
                 return TestResult::discard();
             }
 
-            let mut player = Player::new(position);
+            let mut player = Player::new(FieldSide::Left, (position.1 * 2.0) as u32);
+            player.position = position;
             player.set_movement(movement);
             player.update(dt, height);
 
@@ -226,7 +277,7 @@ mod tests {
 
     quickcheck! {
         fn update_score(old_score: isize, additional_points: isize) -> bool {
-            let mut player = Player::new((0.0, 0.0));
+            let mut player = Player::new(FieldSide::Left, 42);
             player.score = old_score;
             player.update_score(additional_points);
 
@@ -247,7 +298,7 @@ mod tests {
 
     #[test]
     fn update_score_upper_overflow() {
-        let mut player = Player::new((0.0, 0.0));
+        let mut player = Player::new(FieldSide::Left, 42);
         player.score = ::std::isize::MAX;
         player.update_score(1);
         assert_eq!(player.score, ::std::isize::MAX);
@@ -255,9 +306,16 @@ mod tests {
 
     #[test]
     fn update_score_lower_overflow() {
-        let mut player = Player::new((0.0, 0.0));
+        let mut player = Player::new(FieldSide::Left, 42);
         player.score = ::std::isize::MIN;
         player.update_score(-1);
         assert_eq!(player.score, ::std::isize::MIN);
+    }
+
+    #[test]
+    fn update_position() {
+        let mut player = Player::new(FieldSide::Right, 42);
+        player.update_position(60);
+        assert_eq!(player.position, (50.0 - PLAYER_MARGIN, 0.0));
     }
 }
