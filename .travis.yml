@@ -55,7 +55,7 @@ after_success: |
   bash <(curl -s https://codecov.io/bash) &&
   echo "Uploaded code coverage";
   if [[ "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-  cargo rustdoc --all-features -- --no-defaults --passes collapse-docs --passes unindent-comments \
+  cargo rustdoc --all-features -- --no-defaults --passes collapse-docs --passes unindent-comments --passes strip-priv-imports\
   && echo "<meta http-equiv=refresh content=0;url=${PROJECT_NAME}/index.html>" > target/doc/index.html && \
   sudo pip install ghp-import && \
   ghp-import -n target/doc && \
