@@ -2,13 +2,24 @@
 name = "mief"
 version = "0.0.0"
 authors = ["BMeu <bastian@bastianmeyer.eu>"]
+
+categories = ["games"]
+keywords = ["pong", "clone"]
 description = "Mief is a Pong clone written in Rust."
-repository = "https://github.com/BMeu/Mief"
-readme = "README.md"
+
+# Meta information.
 documentation = "https://docs.rs/mief/"
 license = "MIT/Apache-2.0"
-keywords = ["pong", "clone"]
-categories = ["games"]
+readme = "README.md"
+repository = "https://github.com/BMeu/Mief"
+
+# Exclude development files when publishing.
+exclude = [
+    "resources/*",
+    ".appveyor.yml",
+    ".gitignore",
+    ".travis.yml",
+]
 
 [badges]
 appveyor = { repository = "BMeu/mief" }
@@ -17,14 +28,13 @@ travis-ci = { repository = "BMeu/Mief" }
 [features]
 display-fps = ["fps_counter"]
 
-[[bin]]
-name = "mief"
-
 [dependencies]
 find_folder = "0.3"
-fps_counter = { version = "0.2", optional = true }
 piston_window = "0.65"
 rand = "0.3"
+
+# Optional dependencies.
+fps_counter = { version = "0.2", optional = true }
 
 [dev-dependencies]
 quickcheck = "0.4"
