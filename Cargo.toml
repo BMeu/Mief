@@ -1,6 +1,6 @@
 [package]
 name = "mief"
-version = "0.0.0"
+version = "0.1.0"
 authors = ["BMeu <bastian@bastianmeyer.eu>"]
 
 categories = ["games"]
@@ -8,13 +8,14 @@ keywords = ["pong", "clone"]
 description = "Mief is a Pong clone written in Rust."
 
 # Meta information.
-documentation = "https://docs.rs/mief/"
+documentation = "https://bmeu.github.io/Mief"
 license = "MIT/Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/BMeu/Mief"
 
 # Exclude development files when publishing.
 exclude = [
+    "docs/*",
     "resources/*",
     ".appveyor.yml",
     ".gitignore",

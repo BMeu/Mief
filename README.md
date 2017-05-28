@@ -3,11 +3,14 @@
 [![Build Status on Travis](https://travis-ci.org/BMeu/Mief.svg?branch=master)](https://travis-ci.org/BMeu/Mief)
 [![Build Status on AppVeyor](https://ci.appveyor.com/api/projects/status/xxukbycd0en6kvr8?svg=true)](https://ci.appveyor.com/project/BMeu/mief)
 [![Codecov](https://codecov.io/gh/BMeu/Mief/branch/master/graph/badge.svg)](https://codecov.io/gh/BMeu/Mief)
-[![License](https://img.shields.io/github/license/BMeu/Mief.svg)](README.md)
+[![License](https://img.shields.io/crates/l/mief.svg)](README.md)
+[![crates.io](https://img.shields.io/crates/v/mief.svg)](https://crates.io/crates/fine_grained)
+[![Documentation](https://docs.rs/mief/badge.svg)](https://bmeu.github.io/Mief)
+[![Crates.io](https://img.shields.io/crates/d/mief.svg)](https://crates.io/crates/fine_grained)
 
 _Mief_ is a [_Pong_](https://en.wikipedia.org/wiki/Pong) clone written in [_Rust_](https://www.rust-lang.org/en-US/).
 
-**WORK IN PROGRESS**
+**WORK IN PROGRESS:** Please report any issues and wishes on [GitHub](https://github.com/BMeu/Mief/issues).
 
 ## Usage
 
@@ -16,8 +19,8 @@ _Mief_ is a [_Pong_](https://en.wikipedia.org/wiki/Pong) clone written in [_Rust
    2. Download _Mief_: `git clone https://github.com/BMeu/Mief.git; cd Mief`
 2. Run _Mief_: `cargo run --release`
 
-If you want to display the current frames per second (FPS), instead (compile and) run _Mief_ with the `display-fps`
-feature: `cargo run --release --features display-fps`.
+If you want to display the current frames per second (FPS), you will have to (compile and) run _Mief_ with the
+`display-fps` feature: `cargo run --release --features display-fps` instead.
 
 ## Instructions
 
