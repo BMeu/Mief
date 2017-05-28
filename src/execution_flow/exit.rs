@@ -12,7 +12,7 @@ use std::process;
 use execution_flow::Error;
 
 /// The exit codes returned by the _Mief_.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Code {
     /// Successful (i.e. expected) execution (Code: `0`).
     Success = 0,
@@ -22,6 +22,12 @@ pub enum Code {
 
     /// Failure during I/O operations (Code: `2`).
     IOFailure = 2,
+}
+
+impl From<Code> for i32 {
+    fn from(code: Code) -> i32 {
+        code as i32
+    }
 }
 
 /// Quit the program execution. The exit code and message are chosen based on `error`.
@@ -35,10 +41,35 @@ pub fn fail_from_error(error: Error) -> ! {
 /// Quit the program execution with the given `exit_code` and an error `message` explaining the exit.
 pub fn fail_with_message(exit_code: Code, message: &str) -> ! {
     println!("Error: {description}", description = message);
-    process::exit(exit_code as i32)
+    quit(exit_code)
 }
 
 /// Quit the program execution with a `Success` exit code.
 pub fn succeed() -> ! {
-    process::exit(Code::Success as i32)
+    quit(Code::Success)
+}
+
+/// Quit the program execution with the given code.
+fn quit<I: Into<i32>>(code: I) -> ! {
+    process::exit(code.into())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn exit_code_success() {
+        assert_eq!(0, Code::Success.into());
+    }
+
+    #[test]
+    fn exit_code_piston_failure() {
+        assert_eq!(1, Code::PistonFailure.into());
+    }
+
+    #[test]
+    fn exit_code_io_failure() {
+        assert_eq!(2, Code::IOFailure.into());
+    }
 }
