@@ -125,8 +125,9 @@ impl Field {
     pub fn on_resize(&mut self, new_width: u32, new_height: u32) {
         self.width = new_width;
         self.height = new_height;
-        self.players[0].update_position(new_width);
-        self.players[1].update_position(new_width);
+        for player in &mut self.players {
+            player.update_position(new_width);
+        }
     }
 
     /// Update the field state.
