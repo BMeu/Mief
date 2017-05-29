@@ -4,9 +4,9 @@
 [![Build Status on AppVeyor](https://ci.appveyor.com/api/projects/status/xxukbycd0en6kvr8?svg=true)](https://ci.appveyor.com/project/BMeu/mief)
 [![Codecov](https://codecov.io/gh/BMeu/Mief/branch/master/graph/badge.svg)](https://codecov.io/gh/BMeu/Mief)
 [![License](https://img.shields.io/crates/l/mief.svg)](README.md)
-[![crates.io](https://img.shields.io/crates/v/mief.svg)](https://crates.io/crates/fine_grained)
+[![crates.io](https://img.shields.io/crates/v/mief.svg)](https://crates.io/crates/mief)
 [![Documentation](https://docs.rs/mief/badge.svg)](https://bmeu.github.io/Mief)
-[![Crates.io](https://img.shields.io/crates/d/mief.svg)](https://crates.io/crates/fine_grained)
+[![Crates.io](https://img.shields.io/crates/d/mief.svg)](https://crates.io/crates/mief)
 
 _Mief_ is a [_Pong_](https://en.wikipedia.org/wiki/Pong) clone written in [_Rust_](https://www.rust-lang.org/en-US/).
 
