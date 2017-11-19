@@ -11,6 +11,10 @@ Possible log types:
 * `[fixed]` for any bug fixes.
 * `[security]` to invite users to upgrade in case of vulnerabilities.
 
+## v0.1.1 (2017-11-19)
+
+* `[fixed]` Fix macOS build errors.
+
 ## v0.1.0 (2017-05-28)
 
 * Initial release
