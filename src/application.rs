@@ -13,11 +13,16 @@ use find_folder::Search;
 use fps_counter::FPSCounter;
 use piston_window::clear;
 use piston_window::Button;
+use piston_window::ButtonArgs;
+use piston_window::ButtonState;
+use piston_window::Event;
 use piston_window::Glyphs;
 use piston_window::Input;
+use piston_window::Loop;
 use piston_window::OpenGL;
 use piston_window::PistonWindow;
 use piston_window::RenderArgs;
+use piston_window::TextureSettings;
 use piston_window::Transformed;
 use piston_window::UpdateArgs;
 use piston_window::WindowSettings;
@@ -96,6 +101,14 @@ impl Application {
         Ok(application)
     }
 
+    /// Handle button events.
+    fn on_button_change(&mut self, button_arguments: ButtonArgs) {
+        match button_arguments.state {
+            ButtonState::Press => self.on_button_pressed(button_arguments.button),
+            ButtonState::Release => self.on_button_released(button_arguments.button),
+        }
+    }
+
     /// Handle button press events.
     fn on_button_pressed(&mut self, button: Button) {
         self.field.on_button_pressed(button);
@@ -107,10 +120,11 @@ impl Application {
     }
 
     /// Render the entire application.
-    fn on_render(&mut self, event: &Input, _render_arguments: &RenderArgs) {
+    fn on_render(&mut self, event: &Event, _render_arguments: &RenderArgs) {
         let font: PathBuf = self.assets.join("Anonymous Pro.ttf");
         let factory = self.window.factory.clone();
-        let mut font = Glyphs::new(font, factory).unwrap();
+        let texture_settings = TextureSettings::new();
+        let mut font = Glyphs::new(font, factory, texture_settings).unwrap();
 
         let field: &Field = &self.field;
         let scoreboard: &Scoreboard = &self.scoreboard;
@@ -150,13 +164,22 @@ impl Application {
     pub fn run(&mut self) {
         while let Some(event) = self.window.next() {
             match event {
-                Input::Press(button) => self.on_button_pressed(button),
-                Input::Release(button) => self.on_button_released(button),
-                Input::Render(render_arguments) => self.on_render(&event, &render_arguments),
-                Input::Resize(width, height) => self.on_resize(width, height),
-                Input::Update(update_arguments) => self.on_update(&update_arguments),
+                Event::Input(input_event) => {
+                    match input_event {
+                        Input::Button(button_arguments) => self.on_button_change(button_arguments),
+                        Input::Resize(width, height) => self.on_resize(width, height),
+                        _ => {},
+                    }
+                },
+                Event::Loop(loop_event) => {
+                    match loop_event {
+                        Loop::Render(render_arguments) => self.on_render(&event, &render_arguments),
+                        Loop::Update(update_arguments) => self.on_update(&update_arguments),
+                        _ => {},
+                    }
+                },
                 _ => {},
-            }
+            };
         }
     }
 }

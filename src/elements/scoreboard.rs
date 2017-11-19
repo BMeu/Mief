@@ -75,7 +75,7 @@ impl Scoreboard {
     fn draw_text(&self, text: &str, alignment: &TextAlignment, position_x: f64, font: &mut Glyphs,
                  context: &Context, graphics: &mut G2d) {
         let size: u32 = self.determine_font_size();
-        let width: f64 = font.width(size, text);
+        let width: f64 = font.width(size, text).unwrap_or(0.0);
 
         // The vertical alignment is the middle of the scoreboard. The y-position is the baseline of the text.
         let y: f64 = f64::from(self.height + size) / 2.0;
@@ -83,7 +83,7 @@ impl Scoreboard {
         let transformation = context.transform.trans(x, y);
 
         let text_object = Text::new_color(color::WHITE, size);
-        text_object.draw(text, font, &context.draw_state, transformation, graphics);
+        let _ = text_object.draw(text, font, &context.draw_state, transformation, graphics);
     }
 
     /// Render the scoreboard.

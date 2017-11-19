@@ -31,7 +31,7 @@ display-fps = ["fps_counter"]
 
 [dependencies]
 find_folder = "0.3"
-piston_window = "0.65"
+piston_window = "0.73"
 rand = "0.3"
 
 # Optional dependencies.
