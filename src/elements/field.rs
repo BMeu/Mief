@@ -98,11 +98,11 @@ impl Field {
 
         // Draw the center line.
         let center_line = Line::new(color::GRAY, line_width);
-        let position_x: f64 = (self.width as f64) / 2.0 - line_width;
+        let position_x: f64 = f64::from(self.width) / 2.0 - line_width;
         let number_of_dashes: u32 = 10;
-        let height: f64 = (self.height as f64) / ((number_of_dashes as f64) * 2.0 - 1.0);
+        let height: f64 = f64::from(self.height) / (f64::from(number_of_dashes) * 2.0 - 1.0);
         for i in 0..number_of_dashes {
-            let position_y: f64 = (i as f64) * height * 2.0;
+            let position_y: f64 = f64::from(i) * height * 2.0;
             let transformation = context.transform.trans(position_x, position_y);
             center_line.draw([0.0, 0.0, 0.0, height], &context.draw_state, transformation, graphics);
         }
@@ -110,7 +110,7 @@ impl Field {
         // Draw the top line.
         let line = Line::new(color::WHITE, line_width);
         let transformation = context.transform.trans(0.0, 0.0 + line_width);
-        line.draw([0.0, 0.0, self.width as f64, 0.0], &context.draw_state, transformation, graphics);
+        line.draw([0.0, 0.0, f64::from(self.width), 0.0], &context.draw_state, transformation, graphics);
 
         // Draw the players.
         for player in &self.players {

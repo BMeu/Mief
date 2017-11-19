@@ -46,8 +46,8 @@ pub struct Ball {
 impl Ball {
     /// Create a new ball with a random speed at the center of the window (given by `[width, height]`).
     pub fn new(window_size: [u32; 2]) -> Ball {
-        let width = window_size[0] as f64;
-        let height = window_size[1] as f64;
+        let width = f64::from(window_size[0]);
+        let height = f64::from(window_size[1]);
 
         let radius: f64 = 5.0;
         let mut position: (f64, f64) = (width / 2.0 - radius, height / 2.0 - radius);
@@ -121,14 +121,14 @@ impl Ball {
         if leaving_on_left_side {
             return BallStatus::LeftOnLeftSide;
         }
-        let leaving_on_right_side: bool = self.position.0 + self.diameter + progress_x > width as f64;
+        let leaving_on_right_side: bool = self.position.0 + self.diameter + progress_x > f64::from(width);
         if leaving_on_right_side {
             return BallStatus::LeftOnRightSide;
         }
 
         // Will the ball leave the window on the y-axis? If so, revert speed on y-axis.
         let leaving_on_top: bool = self.position.1 + progress_y < 0.0;
-        let leaving_on_bottom: bool = self.position.1 + self.diameter + progress_y > height as f64;
+        let leaving_on_bottom: bool = self.position.1 + self.diameter + progress_y > f64::from(height);
         if leaving_on_top || leaving_on_bottom {
             self.speed.1 *= -1.0;
         }
@@ -140,8 +140,8 @@ impl Ball {
         // Ensure the ball is entirely within the window on the y-axis.
         if self.position.1 < 0.0 {
             self.position.1 = 0.0;
-        } else if self.position.1 + self.diameter > height as f64 {
-            self.position.1 = (height as f64) - self.diameter;
+        } else if self.position.1 + self.diameter > f64::from(height) {
+            self.position.1 = f64::from(height) - self.diameter;
         }
 
         BallStatus::WithinGame

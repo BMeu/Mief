@@ -72,13 +72,13 @@ impl Scoreboard {
 
     /// Draw the given `text` aligned at `position_x` on the screen. The text is always vertically aligned at the middle
     /// of the scoreboard.
-    fn draw_text(&self, text: &str, alignment: TextAlignment, position_x: f64, font: &mut Glyphs,
+    fn draw_text(&self, text: &str, alignment: &TextAlignment, position_x: f64, font: &mut Glyphs,
                  context: &Context, graphics: &mut G2d) {
         let size: u32 = self.determine_font_size();
         let width: f64 = font.width(size, text);
 
         // The vertical alignment is the middle of the scoreboard. The y-position is the baseline of the text.
-        let y: f64 = ((self.height + size) as f64) / 2.0;
+        let y: f64 = f64::from(self.height + size) / 2.0;
         let x: f64 = alignment.align(position_x, width);
         let transformation = context.transform.trans(x, y);
 
@@ -88,20 +88,20 @@ impl Scoreboard {
 
     /// Render the scoreboard.
     pub fn on_render(&self, font: &mut Glyphs, context: Context, graphics: &mut G2d) {
-        let center: f64 = (self.width as f64) / 2.0;
+        let center: f64 = f64::from(self.width) / 2.0;
         let left_margin: f64 = 10.0;
-        let right_margin: f64 = (self.width as f64) - left_margin;
+        let right_margin: f64 = f64::from(self.width) - left_margin;
 
         // Draw the title.
-        self.draw_text(&self.title, TextAlignment::Center, center, font, &context, graphics);
+        self.draw_text(&self.title, &TextAlignment::Center, center, font, &context, graphics);
 
         // Draw the left score.
         let score: &str = &self.scores[0].to_string();
-        self.draw_text(score, TextAlignment::Left, left_margin, font, &context, graphics);
+        self.draw_text(score, &TextAlignment::Left, left_margin, font, &context, graphics);
 
         // Draw the right score.
         let score: &str = &self.scores[1].to_string();
-        self.draw_text(score, TextAlignment::Right, right_margin, font, &context, graphics);
+        self.draw_text(score, &TextAlignment::Right, right_margin, font, &context, graphics);
     }
 
     /// Resize the scoreboard.

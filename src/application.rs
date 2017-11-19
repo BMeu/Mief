@@ -120,7 +120,7 @@ impl Application {
         let _ = self.window.draw_2d(event, |context, gl_graphics| {
             clear(color::BLACK, gl_graphics);
 
-            field.on_render(context.trans(0.0, SCOREBOARD_HEIGHT as f64), gl_graphics);
+            field.on_render(context.trans(0.0, f64::from(SCOREBOARD_HEIGHT)), gl_graphics);
             scoreboard.on_render(&mut font, context.trans(0.0, 0.0), gl_graphics);
 
             #[cfg(feature = "display-fps")]

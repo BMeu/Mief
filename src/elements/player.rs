@@ -64,7 +64,7 @@ impl FieldSide {
     pub fn get_x_position(&self, player_width: f64, field_width: u32) -> f64 {
         match *self {
             FieldSide::Left => PLAYER_MARGIN,
-            FieldSide::Right => (field_width as f64) - player_width - PLAYER_MARGIN,
+            FieldSide::Right => f64::from(field_width) - player_width - PLAYER_MARGIN,
         }
     }
 }
@@ -146,8 +146,8 @@ impl Player {
         match self.movement {
             Movement::Down => {
                 self.position.1 += self.speed * dt;
-                if self.position.1 + self.size.1 > (height as f64) {
-                    self.position.1 = (height as f64) - self.size.1;
+                if self.position.1 + self.size.1 > f64::from(height) {
+                    self.position.1 = f64::from(height) - self.size.1;
                 }
             },
             Movement::Up => {
