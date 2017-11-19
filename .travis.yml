@@ -4,14 +4,14 @@ rust:
   - stable
   - beta
   - nightly
-  - nightly-2017-05-03
+  - nightly-2017-11-18
 os:
   - linux
   - osx
 env:
   global:
-    - NIGHTLY_VERSION=nightly-2017-05-03
-    - CLIPPY_VERSION=0.0.131
+    - NIGHTLY_VERSION=nightly-2017-11-18
+    - CLIPPY_VERSION=0.0.172
     - RUST_BACKTRACE=1
     - PROJECT_NAME=mief
 cache: cargo
@@ -66,4 +66,4 @@ after_success: |
 matrix:
   allow_failures:
     - rust: nightly
-    - rust: nightly-2017-05-03
+    - rust: nightly-2017-11-18
