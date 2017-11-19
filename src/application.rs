@@ -81,8 +81,8 @@ impl Application {
             #[cfg(feature = "display-fps")]
             () => {
                 Application {
-                    assets: assets,
-                    window: window,
+                    assets,
+                    window,
                     field: Field::new([width, height - SCOREBOARD_HEIGHT]),
                     scoreboard: Scoreboard::new([width, SCOREBOARD_HEIGHT], title),
                     fps_counter: FPSCounter::new(),
@@ -91,8 +91,8 @@ impl Application {
             #[cfg(not(feature = "display-fps"))]
             () => {
                 Application {
-                    assets: assets,
-                    window: window,
+                    assets,
+                    window,
                     field: Field::new([width, height - SCOREBOARD_HEIGHT]),
                     scoreboard: Scoreboard::new([width, SCOREBOARD_HEIGHT], title),
                 }

@@ -73,7 +73,7 @@ impl Ball {
 
         Ball {
             diameter: radius * 2.0,
-            position: position,
+            position,
             speed: (speed_x, speed_y),
         }
     }
