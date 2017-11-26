@@ -24,6 +24,7 @@ exclude = [
 
 [badges]
 appveyor = { repository = "BMeu/mief" }
+codecov = { repository = "BMEU/mief" }
 travis-ci = { repository = "BMeu/Mief" }
 
 [features]
