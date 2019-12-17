@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["TextAlignment","Alignment of text."]],"struct":[["Scoreboard","The scoreboard displays information on the game, such as the current score and the name."]]});

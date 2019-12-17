@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["BallStatus","The current status of the ball."]],"struct":[["Ball","The ball used for playing."]]});

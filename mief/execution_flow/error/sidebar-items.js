@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Error","A wrapper type for all errors caused by Mief."]],"type":[["Result","A specialized `Result` type for Mief."]]});

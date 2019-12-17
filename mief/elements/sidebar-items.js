@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["ball","The ball used for playing and directly associated structures."],["field","The playing field of the game."],["player","The player and directly associated structures."],["scoreboard","Display information on the current game status."]]});

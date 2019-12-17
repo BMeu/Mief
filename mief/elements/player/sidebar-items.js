@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["PLAYER_MARGIN","The margin between the player's handle and the respective edge of the field."],["SPEED","The player's initial speed."]],"enum":[["FieldSide","The player's position on the field."],["Movement","The direction of the player's movement."]],"struct":[["Player","The player."]]});

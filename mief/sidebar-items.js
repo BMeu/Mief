@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["main","Run Mief."]],"mod":[["application","The highest abstraction of the application logic, including window creation."],["color","Color definitions."],["elements","Elements of the game itself, such as the players and the ball."],["execution_flow","Functions and types modifying the normal program execution flow."]]});

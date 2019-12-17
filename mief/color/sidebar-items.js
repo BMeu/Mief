@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["BLACK","`#000000`, `100%` opacity."],["GRAY","`#808080`, `100%` opacity."],["GREEN","'#00ff00', '100%' capacity."],["WHITE","`#ffffff`, `100%` opacity."]]});

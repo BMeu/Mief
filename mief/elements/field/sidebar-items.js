@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["SPEED_CHANGE","The amount by which the speeds of the ball and players are changed."],["SPEED_CHANGE_INTERVAL","The interval at which the ball's and the players' speeds are changed."]],"struct":[["Field","The field where the game actually occurs."]]});
